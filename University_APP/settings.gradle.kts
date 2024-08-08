@@ -1,4 +1,4 @@
-rootProject.name = "App"
+rootProject.name = "University_Connect"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {

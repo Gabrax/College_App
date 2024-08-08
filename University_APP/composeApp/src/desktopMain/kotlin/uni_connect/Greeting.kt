@@ -1,4 +1,4 @@
-package University_APP
+package uni_connect
 
 class Greeting {
     private val platform = getPlatform()
