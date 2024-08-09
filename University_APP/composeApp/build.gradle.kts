@@ -7,15 +7,18 @@ plugins {
     alias(libs.plugins.compose.compiler) // This might be redundant if covered by JetBrains Compose
 }
 
-
-
+repositories {
+    mavenCentral() // This is now the primary repository for JavaFx
+    google() // For AndroidX dependencies
+    maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+}
 
 kotlin {
     jvm("desktop")
-    
+
     sourceSets {
         val desktopMain by getting
-        
+
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
@@ -23,6 +26,7 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
+            implementation(compose.desktop.currentOs)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
             implementation("com.squareup.moshi:moshi:1.15.1")
@@ -47,6 +51,7 @@ kotlin {
         }
     }
 }
+
 
 
 compose.desktop {
