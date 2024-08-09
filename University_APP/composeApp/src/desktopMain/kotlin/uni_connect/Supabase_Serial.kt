@@ -10,6 +10,7 @@ import io.ktor.client.statement.*
 const val SUPABASE_URL = "https://vfqfeaefcvxxkopkkyil.supabase.co"
 const val SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmcWZlYWVmY3Z4eGtvcGtreWlsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjMxMjAyNjMsImV4cCI6MjAzODY5NjI2M30.vVZ5dMaDpvdxUadM_Uf-x4MDpHgBrJv_QRYL-XPigqE"
 
+
 val supabase = createSupabaseClient(SUPABASE_URL, SUPABASE_KEY) {
     install(Postgrest) // Add the Postgrest plugin
     defaultSerializer = MoshiSerializer() // You can use MoshiSerializer if needed

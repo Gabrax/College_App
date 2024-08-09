@@ -42,8 +42,13 @@ kotlin {
             implementation("io.ktor:ktor-client-json:2.3.4")
             implementation("io.ktor:ktor-client-serialization:2.3.4")
             implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
-            implementation ("androidx.compose.runtime:runtime-livedata:$1.6.8")
+            implementation("androidx.compose.runtime:runtime-livedata:$1.6.8")
             implementation("ch.qos.logback:logback-classic:1.2.3")
+            implementation("cafe.adriel.voyager:voyager-navigator:1.1.0-beta02")
+            implementation("cafe.adriel.voyager:voyager-screenmodel:1.1.0-beta02")
+            implementation("cafe.adriel.voyager:voyager-bottom-sheet-navigator:1.1.0-beta02")
+            implementation("cafe.adriel.voyager:voyager-tab-navigator:1.1.0-beta02")
+            implementation("cafe.adriel.voyager:voyager-transitions:1.1.0-beta02")
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

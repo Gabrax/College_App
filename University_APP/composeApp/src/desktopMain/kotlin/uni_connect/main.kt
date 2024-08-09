@@ -20,8 +20,6 @@ const val HEIGHT = 700
 
 fun main() = application {
 
-    val userViewModel = UserViewModel()
-
     val windowState = rememberWindowState(
         position = WindowPosition(Alignment.Center),
         size = DpSize(WIDTH.dp, HEIGHT.dp)
@@ -33,8 +31,9 @@ fun main() = application {
     Window(
         state = windowState,
         onCloseRequest = {
+            exitApplication()
             if (exitAppFlag) {
-                exitApplication() // Call exitApplication if the flag is true
+                exitApplication()
             }
         },
         resizable = false,
@@ -43,15 +42,14 @@ fun main() = application {
         undecorated = true,
         alwaysOnTop = true
     ) {
-        App(userViewModel)
+        App(UserViewModel())
     }
-
 
     println(supabase)
 
     LaunchedEffect(exitAppFlag) {
         if (exitAppFlag) {
-            exitApplication() // Ensure the application exits when the flag is true
+            exitApplication()
         }
     }
 
