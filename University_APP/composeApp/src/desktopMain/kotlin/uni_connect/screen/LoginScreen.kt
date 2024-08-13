@@ -10,8 +10,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -21,11 +19,13 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import io.github.jan.supabase.gotrue.auth
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.painterResource
 import rememberMessageBarState
 import uni_connect.Database.signInWithEmail
 import uni_connect.Database.signUpNewUserWithEmail
 import uni_connect.Database.supabase
-import java.io.File
+import university_connect.composeapp.generated.resources.Res
+import university_connect.composeapp.generated.resources.logo
 
 class LoginScreen: Screen {
 
@@ -48,8 +48,8 @@ class LoginScreen: Screen {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                val imageBitmap: ImageBitmap = loadImageBitmap(File("src/desktopMain/Images/logo.png").inputStream())
-                Image(bitmap = imageBitmap, modifier = Modifier.size(150.dp), contentDescription = "")
+
+                Image(painter = painterResource(Res.drawable.logo), modifier = Modifier.size(150.dp), contentDescription = "")
 
                 Spacer(modifier = Modifier.height(25.dp))
 
