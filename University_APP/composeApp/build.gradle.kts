@@ -53,6 +53,7 @@ kotlin {
             implementation("cafe.adriel.voyager:voyager-bottom-sheet-navigator:1.1.0-beta02")
             implementation("cafe.adriel.voyager:voyager-tab-navigator:1.1.0-beta02")
             implementation("cafe.adriel.voyager:voyager-transitions:1.1.0-beta02")
+            implementation("com.stevdza-san:messagebarkmp:1.0.5")
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

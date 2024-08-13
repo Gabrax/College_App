@@ -37,11 +37,11 @@ fun main() = application {
                 exitApplication()
             }
         },
-        resizable = false,
+        resizable = true,
         title = "University Connect",
         icon = icon,
         undecorated = false,
-        alwaysOnTop = true
+        alwaysOnTop = true,
     ) {
         App()
     }

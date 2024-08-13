@@ -1,5 +1,6 @@
 package uni_connect.screen
 
+import ContentWithMessageBar
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -18,7 +19,9 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import io.github.jan.supabase.gotrue.auth
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import rememberMessageBarState
 import uni_connect.Database.signInWithEmail
 import uni_connect.Database.signUpNewUserWithEmail
 import uni_connect.Database.supabase
@@ -30,6 +33,7 @@ class LoginScreen: Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
+        val messageBarState = rememberMessageBarState()
 
         val scope = rememberCoroutineScope()
         val auth = remember { supabase.auth }
@@ -37,85 +41,101 @@ class LoginScreen: Screen {
         var userPassword by remember { mutableStateOf("") }
         var errorMessage by remember { mutableStateOf<String?>(null) }
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            val imageBitmap: ImageBitmap = loadImageBitmap(File("src/desktopMain/Images/logo.png").inputStream())
-            Image(bitmap = imageBitmap, modifier = Modifier.size(150.dp), contentDescription = "")
+        ContentWithMessageBar(messageBarState = messageBarState){
+            Column(
+                modifier = Modifier
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                val imageBitmap: ImageBitmap = loadImageBitmap(File("src/desktopMain/Images/logo.png").inputStream())
+                Image(bitmap = imageBitmap, modifier = Modifier.size(150.dp), contentDescription = "")
 
-            Spacer(modifier = Modifier.height(25.dp))
+                Spacer(modifier = Modifier.height(25.dp))
 
-            OutlinedTextField(
-                value = userEmail,
-                onValueChange = { userEmail = it },
-                label = { Text("Email") },
-                leadingIcon = {Icon(imageVector = Icons.Filled.Email, contentDescription = "Email") },
-            )
+                OutlinedTextField(
+                    value = userEmail,
+                    onValueChange = { userEmail = it },
+                    label = { Text("Email") },
+                    leadingIcon = {Icon(imageVector = Icons.Filled.Email, contentDescription = "Email") },
+                    isError = errorMessage != null,
+                    supportingText = {
+                        if (errorMessage != null) {
+                            Text(
+                                text = errorMessage!!,
+                                style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.error),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                    },
+                )
 
-            Spacer(modifier = Modifier.height(12.dp))
-
-
-            OutlinedTextField(
-                value = userPassword,
-                onValueChange = { newPassword ->
-                    userPassword = newPassword
-                    // Trigger validation when the password changes
-                    errorMessage = if (newPassword.length < 6 && newPassword.isNotEmpty()) {
-                        "Min.length is 6 characters"
-                    } else {
-                        null
-                    }
-                },
-                label = { Text("Password") },
-                leadingIcon = { Icon(imageVector = Icons.Filled.Info, contentDescription = "Password") },
-                visualTransformation = PasswordVisualTransformation(),
-                isError = errorMessage != null,
-                supportingText = {
-                    if (errorMessage != null) {
-                        Text(
-                            text = errorMessage!!,
-                            style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.error),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
-                },
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
 
+                OutlinedTextField(
+                    value = userPassword,
+                    onValueChange = { newPassword ->
+                        userPassword = newPassword
+                        // Trigger validation when the password changes
+                        errorMessage = if (newPassword.length < 6 && newPassword.isNotEmpty()) {
+                            "Min.length is 6 characters"
+                        } else {
+                            null
+                        }
+                    },
+                    label = { Text("Password") },
+                    leadingIcon = { Icon(imageVector = Icons.Filled.Info, contentDescription = "Password") },
+                    visualTransformation = PasswordVisualTransformation(),
+                    isError = errorMessage != null,
+                    supportingText = {
+                        if (errorMessage != null) {
+                            Text(
+                                text = errorMessage!!,
+                                style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.error),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                    },
+                )
 
-            Button(
-                onClick = {
-                    scope.launch {
-                        try {
-                            signUpNewUserWithEmail(userEmail, userPassword)
-                            // Check if the user is logged in after sign-up
-                            val currentSession = auth.currentSessionOrNull()
-                            if (currentSession != null) {
-                                navigator.replace(HomeScreen())
-                                //println(currentSession)
-                            }
-                        } catch (e: Exception) {
-                            try {
-                                signInWithEmail(userEmail, userPassword)
-                                val currentSession = auth.currentSessionOrNull()
-                                if (currentSession != null) {
-                                    navigator.replace(HomeScreen())
-                                    //println(currentSession)
+                Spacer(modifier = Modifier.height(24.dp))
+
+                    Button(
+                        onClick = {
+                            scope.launch {
+                                try {
+                                    signUpNewUserWithEmail(userEmail, userPassword)
+                                    // Check if the user is logged in after sign-up
+                                    val currentSession = auth.currentSessionOrNull()
+                                    if (currentSession != null) {
+                                        //println(currentSession)
+                                        messageBarState.addSuccess("Successfully created account in")
+                                        delay(1500L)
+                                        navigator.replace(HomeScreen())
+                                    }
+                                } catch (e: Exception) {
+                                    try {
+                                        signInWithEmail(userEmail, userPassword)
+                                        val currentSession = auth.currentSessionOrNull()
+                                        if (currentSession != null) {
+                                            //println(currentSession)
+                                            messageBarState.addSuccess("Successfully logged in")
+                                            delay(1500L)
+                                            navigator.replace(HomeScreen())
+                                        }
+                                    } catch (e: Exception) {
+                                        errorMessage = "Invalid Credentials"
+                                        messageBarState.addError(Exception("Login failed"))
+                                    }
                                 }
-                            } catch (e: Exception) {
-                                errorMessage = "Login failed: ${e.message}"
                             }
                         }
+                    ){
+                        Text(text = "Sign In")
                     }
-                }
-            ){
-                Text(text = "Sign In")
             }
         }
     }
