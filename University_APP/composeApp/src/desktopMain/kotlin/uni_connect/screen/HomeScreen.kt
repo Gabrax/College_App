@@ -10,7 +10,6 @@ import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import kotlin.random.Random
 
 class HomeScreen: Screen {
 
@@ -26,7 +25,7 @@ class HomeScreen: Screen {
             Button(
                 onClick = {
                     navigator.push(
-                        DetailsScreen(Random.nextInt(0, 100))
+                        DetailsScreen()
                     )
                 }
             ){

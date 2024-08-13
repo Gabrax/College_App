@@ -11,9 +11,10 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
+import uni_connect.Database.supabase
 import java.io.File
 
-const val pass = "LI8mAEY3RMotM36K"
+const val pass = "Minecraftcher123@@"
 
 const val WIDTH = 1000
 const val HEIGHT = 700
@@ -39,10 +40,10 @@ fun main() = application {
         resizable = false,
         title = "University Connect",
         icon = icon,
-        undecorated = true,
+        undecorated = false,
         alwaysOnTop = true
     ) {
-        App(UserViewModel())
+        App()
     }
 
     println(supabase)

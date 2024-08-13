@@ -1,4 +1,4 @@
-package uni_connect
+package uni_connect.Database
 
 
 data class User(
