@@ -10,7 +10,7 @@ plugins {
 repositories {
     mavenCentral() // This is now the primary repository for JavaFx
     google() // For AndroidX dependencies
-    maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+    //maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
 }
 
 kotlin {
@@ -23,11 +23,11 @@ kotlin {
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material)
-            implementation(compose.ui)
             implementation(compose.material3)
-            implementation("androidx.compose.material3:material3:1.2.1")
-            implementation("androidx.compose.material3:material3-window-size-class:1.2.1")
-            implementation("androidx.compose.material3:material3-adaptive-navigation-suite:1.3.0-beta05")
+            implementation(compose.ui)
+            //implementation("androidx.compose.material3:material3:1.2.1")
+            //implementation("androidx.compose.material3:material3-window-size-class:1.2.1")
+            //implementation("androidx.compose.material3:material3-adaptive-navigation-suite:1.3.0-beta05")
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
             implementation(compose.desktop.currentOs)

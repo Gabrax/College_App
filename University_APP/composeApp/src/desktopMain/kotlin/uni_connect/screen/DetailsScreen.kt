@@ -5,8 +5,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Button
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,8 +21,8 @@ import uni_connect.Database.users
 
 class DetailsScreen : Screen {
 
-    // Show content flag
-    var showContent by mutableStateOf(false)
+
+    private var showContent by mutableStateOf(false)
 
     @Composable
     override fun Content() {
