@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import io.github.jan.supabase.gotrue.auth
 import io.github.jan.supabase.gotrue.providers.builtin.Email
 import io.github.jan.supabase.postgrest.from
+import io.github.jan.supabase.postgrest.query.Columns
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -20,17 +21,62 @@ suspend fun fetchUsers() {
             val fetchedUsers: List<User> = supabase
                 .from("users")
                 .select()
-                .decodeList() // Directly decode the response into a list of User
+                .decodeList()
 
-                // Update the state with the fetched data
+
                 _users.value = fetchedUsers
                 println("Fetched Users: $fetchedUsers")
             } catch (e: Exception) {
-                // Handle exceptions and log them
+
                 e.printStackTrace()
-                _users.value = emptyList() // Ensure the state is set to an empty list on error
+                _users.value = emptyList()
             }
 
+    }
+}
+
+
+suspend fun insertDisplayName(userName: String,userSurname: String) {
+    val currUser = supabase.auth.currentUserOrNull()
+    supabase.from("profiles").update(
+        {
+            set("name", userName)
+            set("surname", userSurname)
+        }
+    ) {
+        filter {
+            if (currUser != null) {
+                eq("email", currUser.email!!)
+            }
+        }
+    }
+}
+
+private var _currentUserProfile = mutableStateOf<List<UserProfile>>(emptyList())
+val currentUserProfile: State<List<UserProfile>> get() = _currentUserProfile
+
+suspend fun fetchCurrentUsername() {
+    return withContext(Dispatchers.IO) {
+        try {
+            // Get the current user from Supabase
+            val currUser = supabase.auth.currentUserOrNull()
+
+            if (currUser?.email != null) {
+                // Fetch the user profile data
+                val response: List<UserProfile> = supabase.from("profiles")
+                    .select(columns = Columns.type<UserProfile>()){
+                        filter {
+                            eq("email", currUser.email!!)
+                        }
+                    }.decodeList()
+
+                _currentUserProfile.value = response
+                println("Fetched Users: $response")
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            _currentUserProfile.value = emptyList()
+        }
     }
 }
 

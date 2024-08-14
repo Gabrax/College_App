@@ -14,8 +14,8 @@ import cafe.adriel.voyager.transitions.SlideTransition
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import uni_connect.screen.*
 
-var exitAppFlag by mutableStateOf(false)
 
+var exitAppFlag by mutableStateOf(false)
 
 @Composable
 @Preview

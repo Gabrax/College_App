@@ -39,7 +39,9 @@ class LoginScreen: Screen {
         val auth = remember { supabase.auth }
         var userEmail by remember { mutableStateOf("") }
         var userPassword by remember { mutableStateOf("") }
-        var errorMessage by remember { mutableStateOf<String?>(null) }
+        var passError by remember { mutableStateOf<String?>(null) }
+        var emailError by remember { mutableStateOf<String?>(null) }
+
 
         ContentWithMessageBar(messageBarState = messageBarState){
             Column(
@@ -55,14 +57,23 @@ class LoginScreen: Screen {
 
                 OutlinedTextField(
                     value = userEmail,
-                    onValueChange = { userEmail = it },
+                    onValueChange = { newEmail ->
+                        val filtered = newEmail.filter { it != ' ' && it != '\n' }
+                        userEmail = filtered
+                        // Trigger validation when the Email changes
+                        emailError = if (newEmail.length < 4 && newEmail.isNotEmpty()) {
+                            "Incorrect Email"
+                        } else {
+                            null
+                        }
+                    },
                     label = { Text("Email") },
                     leadingIcon = {Icon(imageVector = Icons.Filled.Email, contentDescription = "Email") },
-                    isError = errorMessage != null,
+                    isError = emailError != null,
                     supportingText = {
-                        if (errorMessage != null) {
+                        if (emailError != null) {
                             Text(
-                                text = errorMessage!!,
+                                text = emailError!!,
                                 style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.error),
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
@@ -77,9 +88,10 @@ class LoginScreen: Screen {
                 OutlinedTextField(
                     value = userPassword,
                     onValueChange = { newPassword ->
-                        userPassword = newPassword
+                        val filteredPassword = newPassword.filter { it != ' ' && it != '\n' }
+                        userPassword = filteredPassword
                         // Trigger validation when the password changes
-                        errorMessage = if (newPassword.length < 6 && newPassword.isNotEmpty()) {
+                        passError = if (newPassword.length < 6 && newPassword.isNotEmpty()) {
                             "Min.length is 6 characters"
                         } else {
                             null
@@ -88,11 +100,11 @@ class LoginScreen: Screen {
                     label = { Text("Password") },
                     leadingIcon = { Icon(imageVector = Icons.Filled.Info, contentDescription = "Password") },
                     visualTransformation = PasswordVisualTransformation(),
-                    isError = errorMessage != null,
+                    isError = passError != null,
                     supportingText = {
-                        if (errorMessage != null) {
+                        if (passError != null) {
                             Text(
-                                text = errorMessage!!,
+                                text = passError!!,
                                 style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.error),
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
@@ -108,13 +120,12 @@ class LoginScreen: Screen {
                             scope.launch {
                                 try {
                                     signUpNewUserWithEmail(userEmail, userPassword)
-                                    // Check if the user is logged in after sign-up
                                     val currentSession = auth.currentSessionOrNull()
                                     if (currentSession != null) {
                                         //println(currentSession)
-                                        messageBarState.addSuccess("Successfully created account in")
+                                        messageBarState.addSuccess("Successfully created account")
                                         delay(1500L)
-                                        navigator.replace(HomeScreen())
+                                        navigator.replace(NameSurname())
                                     }
                                 } catch (e: Exception) {
                                     try {
@@ -127,8 +138,8 @@ class LoginScreen: Screen {
                                             navigator.replace(HomeScreen())
                                         }
                                     } catch (e: Exception) {
-                                        errorMessage = "Invalid Credentials"
-                                        messageBarState.addError(Exception("Login failed"))
+                                        //ErrorMessage = "Invalid Credentials"
+                                        messageBarState.addError(Exception("Invalid Credentials"))
                                     }
                                 }
                             }
