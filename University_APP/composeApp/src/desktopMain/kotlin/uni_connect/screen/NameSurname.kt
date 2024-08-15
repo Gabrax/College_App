@@ -22,6 +22,7 @@ import io.github.jan.supabase.gotrue.auth
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import rememberMessageBarState
+import uni_connect.Database.fetchCurrentUsername
 import uni_connect.Database.insertDisplayName
 import uni_connect.Database.supabase
 
@@ -124,7 +125,8 @@ class NameSurname: Screen{
                                     insertDisplayName(userName,userSurname)
                                     messageBarState.addSuccess("Successfully added display name")
                                     delay(1500L)
-                                    navigator.replace(HomeScreen())
+                                    fetchCurrentUsername()
+                                    navigator.replace(MainScreen())
                                 }
                             } catch (e: Exception) {
                                 messageBarState.addError(Exception("Error appending info"))

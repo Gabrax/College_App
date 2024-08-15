@@ -1,13 +1,17 @@
 package uni_connect.Database
 
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import io.github.jan.supabase.gotrue.auth
 import io.github.jan.supabase.gotrue.providers.builtin.Email
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.Columns
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import uni_connect.screen.LoginScreen
 
 
 private var _users = mutableStateOf<List<User>>(emptyList())
@@ -92,4 +96,10 @@ suspend fun signInWithEmail(email: String, password: String) {
         this.email = email
         this.password = password
     }
+}
+
+@Composable
+fun logoutUser(isLoggedIn: Boolean ) {
+    val navigator = LocalNavigator.currentOrThrow
+    navigator.replace(LoginScreen())
 }

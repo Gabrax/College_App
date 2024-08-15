@@ -40,5 +40,7 @@ fun App() {
         Navigator(LoginScreen()) { SlideTransition(it, orientation = SlideOrientation.Vertical) }
     }
 
+
+
 }
 

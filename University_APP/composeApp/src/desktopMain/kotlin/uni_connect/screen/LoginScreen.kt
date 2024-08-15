@@ -21,6 +21,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import rememberMessageBarState
+import uni_connect.Database.fetchCurrentUsername
 import uni_connect.Database.signInWithEmail
 import uni_connect.Database.signUpNewUserWithEmail
 import uni_connect.Database.supabase
@@ -135,7 +136,8 @@ class LoginScreen: Screen {
                                             //println(currentSession)
                                             messageBarState.addSuccess("Successfully logged in")
                                             delay(1500L)
-                                            navigator.replace(HomeScreen())
+                                            navigator.replace(MainScreen())
+                                            fetchCurrentUsername()
                                         }
                                     } catch (e: Exception) {
                                         //ErrorMessage = "Invalid Credentials"
