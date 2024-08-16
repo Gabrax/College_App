@@ -1,11 +1,14 @@
-This is a Kotlin Multiplatform project targeting Desktop.
+<p align="center">
+    <img src="https://github.com/user-attachments/assets/e92d6972-ebb0-44d4-b51b-d9b8837bcdfc" alt="Fulllogo" width="400"/>
+</p>
 
-* `/composeApp` is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - `commonMain` is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    `iosMain` would be the right folder for such calls.
+The objective of this project is to gain experience in Software Application Development.
 
+This application is an idea to integrate with the university's database, 
+it basically relies on the same idea that is used by many schools,
+but in the form of an application instead of a website
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+## 👾 Tech stack
+- Kotlin
+- JetBrains Compose Multiplatform UI Framework
+- Supabase API (Postgres database)
