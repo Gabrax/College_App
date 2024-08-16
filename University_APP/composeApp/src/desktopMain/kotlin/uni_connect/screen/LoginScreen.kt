@@ -3,6 +3,8 @@ package uni_connect.screen
 import ContentWithMessageBar
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Info
@@ -10,6 +12,14 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -26,7 +36,8 @@ import uni_connect.Database.signInWithEmail
 import uni_connect.Database.signUpNewUserWithEmail
 import uni_connect.Database.supabase
 import university_connect.composeapp.generated.resources.Res
-import university_connect.composeapp.generated.resources.logo
+import university_connect.composeapp.generated.resources.Unilogo
+import university_connect.composeapp.generated.resources.Unititle
 
 class LoginScreen: Screen {
 
@@ -43,6 +54,43 @@ class LoginScreen: Screen {
         var passError by remember { mutableStateOf<String?>(null) }
         var emailError by remember { mutableStateOf<String?>(null) }
 
+        val emailFocusRequester = remember { FocusRequester() }
+        val passwordFocusRequester = remember { FocusRequester() }
+        val buttonFocusRequester = remember { FocusRequester() }
+        val focusManager = LocalFocusManager.current
+
+        val specialCharactersToFilter = setOf(
+            ' ', '\n', '\t', '(', ')',
+            '=', '+', '[', ']', '{', '}', ';', ':', '"',
+            '\'', ',', '<', '>', '?', '/'
+        )
+
+        val onSignInClick = {
+            scope.launch {
+                try {
+                    signUpNewUserWithEmail(userEmail, userPassword)
+                    val currentSession = auth.currentSessionOrNull()
+                    if (currentSession != null) {
+                        messageBarState.addSuccess("Successfully created account")
+                        delay(1500L)
+                        navigator.replace(NameSurname())
+                    }
+                } catch (e: Exception) {
+                    try {
+                        signInWithEmail(userEmail, userPassword)
+                        val currentSession = auth.currentSessionOrNull()
+                        if (currentSession != null) {
+                            messageBarState.addSuccess("Successfully logged in")
+                            delay(1500L)
+                            navigator.replace(MainScreen())
+                            fetchCurrentUsername()
+                        }
+                    } catch (e: Exception) {
+                        messageBarState.addError(Exception("Invalid Credentials"))
+                    }
+                }
+            }
+        }
 
         ContentWithMessageBar(messageBarState = messageBarState){
             Column(
@@ -52,16 +100,16 @@ class LoginScreen: Screen {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-                Image(painter = painterResource(Res.drawable.logo), modifier = Modifier.size(150.dp), contentDescription = "")
+                Image(painter = painterResource(Res.drawable.Unilogo), modifier = Modifier.size(150.dp), contentDescription = "")
+                Image(painter = painterResource(Res.drawable.Unititle),modifier = Modifier.width(300.dp).height(50.dp), contentDescription = "")
 
-                Spacer(modifier = Modifier.height(25.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
                 OutlinedTextField(
                     value = userEmail,
                     onValueChange = { newEmail ->
-                        val filtered = newEmail.filter { it != ' ' && it != '\n' }
+                        val filtered = newEmail.filter { it !in specialCharactersToFilter }
                         userEmail = filtered
-                        // Trigger validation when the Email changes
                         emailError = if (newEmail.length < 4 && newEmail.isNotEmpty()) {
                             "Incorrect Email"
                         } else {
@@ -69,7 +117,7 @@ class LoginScreen: Screen {
                         }
                     },
                     label = { Text("Email") },
-                    leadingIcon = {Icon(imageVector = Icons.Filled.Email, contentDescription = "Email") },
+                    leadingIcon = { Icon(imageVector = Icons.Filled.Email, contentDescription = "Email") },
                     isError = emailError != null,
                     supportingText = {
                         if (emailError != null) {
@@ -81,17 +129,29 @@ class LoginScreen: Screen {
                             )
                         }
                     },
+                    modifier = Modifier
+                        .focusRequester(emailFocusRequester)
+                        .onKeyEvent { event ->
+                            if (event.key == Key.Tab) {
+                                passwordFocusRequester.requestFocus()
+                                true
+                            } else {
+                                false
+                            }
+                        },
+                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+                    keyboardActions = KeyboardActions(
+                        onNext = { passwordFocusRequester.requestFocus() }
+                    )
                 )
 
-                Spacer(modifier = Modifier.height(12.dp))
-
+                Spacer(modifier = Modifier.height(10.dp))
 
                 OutlinedTextField(
                     value = userPassword,
                     onValueChange = { newPassword ->
-                        val filteredPassword = newPassword.filter { it != ' ' && it != '\n' }
+                        val filteredPassword = newPassword.filter { it !in specialCharactersToFilter }
                         userPassword = filteredPassword
-                        // Trigger validation when the password changes
                         passError = if (newPassword.length < 6 && newPassword.isNotEmpty()) {
                             "Min.length is 6 characters"
                         } else {
@@ -112,43 +172,37 @@ class LoginScreen: Screen {
                             )
                         }
                     },
+                    modifier = Modifier
+                        .focusRequester(passwordFocusRequester)
+                        .onKeyEvent { event ->
+                            if (event.key == Key.Tab) {
+                                focusManager.moveFocus(FocusDirection.Next)
+                                true
+                            } else {
+                                false
+                            }
+                        },
+                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done)
                 )
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
-                    Button(
-                        onClick = {
-                            scope.launch {
-                                try {
-                                    signUpNewUserWithEmail(userEmail, userPassword)
-                                    val currentSession = auth.currentSessionOrNull()
-                                    if (currentSession != null) {
-                                        //println(currentSession)
-                                        messageBarState.addSuccess("Successfully created account")
-                                        delay(1500L)
-                                        navigator.replace(NameSurname())
-                                    }
-                                } catch (e: Exception) {
-                                    try {
-                                        signInWithEmail(userEmail, userPassword)
-                                        val currentSession = auth.currentSessionOrNull()
-                                        if (currentSession != null) {
-                                            //println(currentSession)
-                                            messageBarState.addSuccess("Successfully logged in")
-                                            delay(1500L)
-                                            navigator.replace(MainScreen())
-                                            fetchCurrentUsername()
-                                        }
-                                    } catch (e: Exception) {
-                                        //ErrorMessage = "Invalid Credentials"
-                                        messageBarState.addError(Exception("Invalid Credentials"))
-                                    }
-                                }
+                Button(
+                    onClick = { onSignInClick() },
+                    modifier = Modifier
+                        .focusRequester(buttonFocusRequester)
+                        .onKeyEvent { event ->
+                            if (event.key == Key.Enter && userEmail.isNotEmpty() && userPassword.isNotEmpty()) {
+                                onSignInClick() // Trigger the button's onClick action
+                                true // Event is consumed
+                            } else {
+                                false // Event is not consumed
                             }
-                        }
-                    ){
-                        Text(text = "Sign In")
-                    }
+                        },
+                    enabled = userEmail.isNotEmpty() && userPassword.isNotEmpty()
+                ) {
+                    Text(text = "Sign In")
+                }
             }
         }
     }

@@ -1,6 +1,5 @@
 package uni_connect.screen
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -27,9 +26,6 @@ import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabNavigator
 import cafe.adriel.voyager.transitions.SlideOrientation
 import cafe.adriel.voyager.transitions.SlideTransition
-import org.jetbrains.compose.resources.painterResource
-import university_connect.composeapp.generated.resources.Icon
-import university_connect.composeapp.generated.resources.Res
 
 
 class MainScreen: Screen {
@@ -112,11 +108,7 @@ class TestScreen1: Screen {
 //                    }
 //                }
                 Spacer(modifier = Modifier.height(24.dp))
-                Image(
-                    modifier = Modifier.size(100.dp),
-                    painter = painterResource(Res.drawable.Icon),
-                    contentDescription = "Zodiac Image"
-                )
+
                 Spacer(modifier = Modifier.height(40.dp))
                 Row(
                     modifier = Modifier

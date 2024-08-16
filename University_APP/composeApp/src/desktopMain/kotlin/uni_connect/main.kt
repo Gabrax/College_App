@@ -14,8 +14,8 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import uni_connect.Database.supabase
-import university_connect.composeapp.generated.resources.Icon
 import university_connect.composeapp.generated.resources.Res
+import university_connect.composeapp.generated.resources.Unilogo
 
 
 const val WIDTH = 1000
@@ -48,9 +48,9 @@ fun main() = application {
                 }
             }
         },
-        resizable = true,
+        resizable = false,
         title = "University Connect",
-        icon = painterResource(Res.drawable.Icon),
+        icon = painterResource(Res.drawable.Unilogo),
         undecorated = false,
         alwaysOnTop = true,
     ) {
