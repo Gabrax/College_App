@@ -16,6 +16,15 @@ val sportsArticles = mutableListOf<ArticleDto>()
 val businessArticles = mutableListOf<ArticleDto>()
 val entertainmentArticles = mutableListOf<ArticleDto>()
 
+val allListsEmpty = listOf(
+    technologyArticles,
+    scienceArticles,
+    healthArticles,
+    sportsArticles,
+    businessArticles,
+    entertainmentArticles
+).all { it.isEmpty() }
+
 @Composable
 fun techNews() {
     newsApiRepository.getTopHeadlines(category = Category.TECHNOLOGY, country = Country.US, pageSize = 1, page = 1)

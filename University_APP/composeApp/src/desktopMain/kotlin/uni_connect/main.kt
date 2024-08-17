@@ -13,7 +13,7 @@ import io.github.jan.supabase.gotrue.auth
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
-import uni_connect.Database.*
+import uni_connect.Database.supabase
 import university_connect.composeapp.generated.resources.Res
 import university_connect.composeapp.generated.resources.Unilogo
 
@@ -23,12 +23,12 @@ const val HEIGHT = 700
 
 fun main() = application {
 
-    techNews()
-    scienceNews()
-    healthNews()
-    sportsNews()
-    businessNews()
-    entertainmentNews()
+//    techNews()
+//    scienceNews()
+//    healthNews()
+//    sportsNews()
+//    businessNews()
+//    entertainmentNews()
 
     val auth = remember { supabase.auth }
 
@@ -59,7 +59,8 @@ fun main() = application {
         title = "University Connect",
         icon = painterResource(Res.drawable.Unilogo),
         undecorated = false,
-        alwaysOnTop = true,
+        alwaysOnTop = false,
+
     ) {
         App()
     }

@@ -131,10 +131,18 @@ class HomeScreen : Screen {
                                 text = "\uD83D\uDC68\u200D\uD83D\uDCBB",
                             )
                             Spacer(modifier = Modifier.height(12.dp))
-                            Text(
-                                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                                text = technologyArticles[0].title
-                            )
+
+                            if(!allListsEmpty){
+                                Text(
+                                    fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                    text = technologyArticles[0].title
+                                )
+                            } else {
+                                Text(
+                                    fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                    text = "error"
+                                )
+                            }
                         }
                     }
                 }
@@ -157,10 +165,17 @@ class HomeScreen : Screen {
                                 text = "\uD83D\uDD2C"
                             )
                             Spacer(modifier = Modifier.height(12.dp))
-                            Text(
-                                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                                text = scienceArticles[0].title
-                            )
+                            if(!allListsEmpty){
+                                Text(
+                                    fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                    text = scienceArticles[0].title
+                                )
+                            } else {
+                                Text(
+                                    fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                    text = "error"
+                                )
+                            }
                         }
                     }
                 }
@@ -183,10 +198,17 @@ class HomeScreen : Screen {
                                 text = "\uD83D\uDC8A"
                             )
                             Spacer(modifier = Modifier.height(12.dp))
-                            Text(
-                                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                                text = healthArticles[0].title
-                            )
+                            if(!allListsEmpty){
+                                Text(
+                                    fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                    text = healthArticles[0].title
+                                )
+                            } else {
+                                Text(
+                                    fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                    text = "error"
+                                )
+                            }
                         }
                     }
                 }
@@ -209,10 +231,17 @@ class HomeScreen : Screen {
                                 text = "\uD83C\uDFC5"
                             )
                             Spacer(modifier = Modifier.height(12.dp))
-                            Text(
-                                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                                text = sportsArticles[0].title
-                            )
+                            if(!allListsEmpty){
+                                Text(
+                                    fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                    text = sportsArticles[0].title
+                                )
+                            } else {
+                                Text(
+                                    fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                    text = "error"
+                                )
+                            }
                         }
                     }
                 }
@@ -235,10 +264,17 @@ class HomeScreen : Screen {
                                 text = "\uD83D\uDC54"
                             )
                             Spacer(modifier = Modifier.height(12.dp))
-                            Text(
-                                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                                text = businessArticles[0].title
-                            )
+                            if(!allListsEmpty){
+                                Text(
+                                    fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                    text = businessArticles[0].title
+                                )
+                            } else {
+                                Text(
+                                    fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                    text = "error"
+                                )
+                            }
                         }
                     }
                 }
@@ -258,13 +294,20 @@ class HomeScreen : Screen {
                             Text(
                                 fontSize = MaterialTheme.typography.displaySmall.fontSize,
                                 fontWeight = FontWeight.Bold,
-                                text = "\uD83C\uDF89"
+                                text = "\uD83D\uDCF0"
                             )
                             Spacer(modifier = Modifier.height(12.dp))
-                            Text(
-                                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                                text = entertainmentArticles[0].title
-                            )
+                            if(!allListsEmpty){
+                                Text(
+                                    fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                    text = entertainmentArticles[0].title
+                                )
+                            } else {
+                                Text(
+                                    fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                    text = "error"
+                                )
+                            }
                         }
                     }
                 }

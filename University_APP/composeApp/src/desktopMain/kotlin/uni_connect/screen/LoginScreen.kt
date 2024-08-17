@@ -105,6 +105,10 @@ class LoginScreen: Screen {
 
                 Spacer(modifier = Modifier.height(10.dp))
 
+                LaunchedEffect(Unit) {
+                    emailFocusRequester.requestFocus()
+                }
+
                 OutlinedTextField(
                     value = userEmail,
                     onValueChange = { newEmail ->
