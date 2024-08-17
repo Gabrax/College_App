@@ -12,7 +12,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,12 +26,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
-import io.github.jan.supabase.gotrue.auth
 import rememberMessageBarState
-import uni_connect.Database.currentUserProfile
-import uni_connect.Database.supabase
+import uni_connect.Database.*
+import java.awt.Desktop
+import java.net.URI
 
 @Composable
 fun AnimatedBorderCard(
@@ -87,9 +84,7 @@ class HomeScreen : Screen {
 
     @Composable
     override fun Content() {
-        val navigator = LocalNavigator.currentOrThrow
         val scope = rememberCoroutineScope()
-        val auth = remember { supabase.auth }
         val messageBarState = rememberMessageBarState()
 
         ContentWithMessageBar(messageBarState = messageBarState){
@@ -99,7 +94,6 @@ class HomeScreen : Screen {
                     .padding(16.dp),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.Top
-
             ){
                 currentUserProfile.value.forEach{ user ->
                     Text(
@@ -112,13 +106,11 @@ class HomeScreen : Screen {
                 }
             }
 
-            Spacer(Modifier.width(30.dp))
-
             LazyVerticalGrid(
                 columns = GridCells.Fixed(3), // 3 columns
-                modifier = Modifier.fillMaxSize(),
-                horizontalArrangement = androidx.compose.foundation.layout.Arrangement.Center,
-                verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center,
+                modifier = Modifier.fillMaxSize().padding(top = 75.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalArrangement = Arrangement.Center,
             ) {
                 item {
                     AnimatedBorderCard(
@@ -127,18 +119,21 @@ class HomeScreen : Screen {
                             .padding(all = 24.dp),
                         shape = RoundedCornerShape(8.dp),
                         gradient = Brush.linearGradient(listOf(Color.Magenta, Color.Cyan)),
-                        onCardClick = {}
+                        onCardClick = {
+                            val url = technologyArticles[0].url
+                            openInBrowser(url)
+                        }
                     ) {
                         Column(modifier = Modifier.padding(all = 24.dp)) {
                             Text(
                                 fontSize = MaterialTheme.typography.displaySmall.fontSize,
                                 fontWeight = FontWeight.Bold,
-                                text = "Welcome"
+                                text = "\uD83D\uDC68\u200D\uD83D\uDCBB",
                             )
                             Spacer(modifier = Modifier.height(12.dp))
                             Text(
                                 fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                                text = "Lorem ipsum dolor sit amet"
+                                text = technologyArticles[0].title
                             )
                         }
                     }
@@ -150,18 +145,21 @@ class HomeScreen : Screen {
                             .padding(all = 24.dp),
                         shape = RoundedCornerShape(8.dp),
                         gradient = Brush.linearGradient(listOf(Color.Magenta, Color.Cyan)),
-                        onCardClick = {}
+                        onCardClick = {
+                            val url = scienceArticles[0].url
+                            openInBrowser(url)
+                        }
                     ) {
                         Column(modifier = Modifier.padding(all = 24.dp)) {
                             Text(
                                 fontSize = MaterialTheme.typography.displaySmall.fontSize,
                                 fontWeight = FontWeight.Bold,
-                                text = "Hello"
+                                text = "\uD83D\uDD2C"
                             )
                             Spacer(modifier = Modifier.height(12.dp))
                             Text(
                                 fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                                text = "Lorem ipsum dolor sit amet"
+                                text = scienceArticles[0].title
                             )
                         }
                     }
@@ -173,18 +171,21 @@ class HomeScreen : Screen {
                             .padding(all = 24.dp),
                         shape = RoundedCornerShape(8.dp),
                         gradient = Brush.linearGradient(listOf(Color.Magenta, Color.Cyan)),
-                        onCardClick = {}
+                        onCardClick = {
+                            val url = healthArticles[0].url
+                            openInBrowser(url)
+                        }
                     ) {
                         Column(modifier = Modifier.padding(all = 24.dp)) {
                             Text(
                                 fontSize = MaterialTheme.typography.displaySmall.fontSize,
                                 fontWeight = FontWeight.Bold,
-                                text = "Hello"
+                                text = "\uD83D\uDC8A"
                             )
                             Spacer(modifier = Modifier.height(12.dp))
                             Text(
                                 fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                                text = "Lorem ipsum dolor sit amet"
+                                text = healthArticles[0].title
                             )
                         }
                     }
@@ -196,18 +197,21 @@ class HomeScreen : Screen {
                             .padding(all = 24.dp),
                         shape = RoundedCornerShape(8.dp),
                         gradient = Brush.linearGradient(listOf(Color.Magenta, Color.Cyan)),
-                        onCardClick = {}
+                        onCardClick = {
+                            val url = sportsArticles[0].url
+                            openInBrowser(url)
+                        }
                     ) {
                         Column(modifier = Modifier.padding(all = 24.dp)) {
                             Text(
                                 fontSize = MaterialTheme.typography.displaySmall.fontSize,
                                 fontWeight = FontWeight.Bold,
-                                text = "Hello"
+                                text = "\uD83C\uDFC5"
                             )
                             Spacer(modifier = Modifier.height(12.dp))
                             Text(
                                 fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                                text = "Lorem ipsum dolor sit amet"
+                                text = sportsArticles[0].title
                             )
                         }
                     }
@@ -219,18 +223,21 @@ class HomeScreen : Screen {
                             .padding(all = 24.dp),
                         shape = RoundedCornerShape(8.dp),
                         gradient = Brush.linearGradient(listOf(Color.Magenta, Color.Cyan)),
-                        onCardClick = {}
+                        onCardClick = {
+                            val url = businessArticles[0].url
+                            openInBrowser(url)
+                        }
                     ) {
                         Column(modifier = Modifier.padding(all = 24.dp)) {
                             Text(
                                 fontSize = MaterialTheme.typography.displaySmall.fontSize,
                                 fontWeight = FontWeight.Bold,
-                                text = "Hello"
+                                text = "\uD83D\uDC54"
                             )
                             Spacer(modifier = Modifier.height(12.dp))
                             Text(
                                 fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                                text = "Lorem ipsum dolor sit amet"
+                                text = businessArticles[0].title
                             )
                         }
                     }
@@ -242,42 +249,39 @@ class HomeScreen : Screen {
                             .padding(all = 24.dp),
                         shape = RoundedCornerShape(8.dp),
                         gradient = Brush.linearGradient(listOf(Color.Magenta, Color.Cyan)),
-                        onCardClick = {}
+                        onCardClick = {
+                            val url = entertainmentArticles[0].url
+                            openInBrowser(url)
+                        }
                     ) {
                         Column(modifier = Modifier.padding(all = 24.dp)) {
                             Text(
                                 fontSize = MaterialTheme.typography.displaySmall.fontSize,
                                 fontWeight = FontWeight.Bold,
-                                text = "Hello"
+                                text = "\uD83C\uDF89"
                             )
                             Spacer(modifier = Modifier.height(12.dp))
                             Text(
                                 fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                                text = "Lorem ipsum dolor sit amet\nLorem ipsum dolor sit amet" +
-                                        "Lorem ipsum dolor sit amet\nLorem ipsum dolor sit amet"
+                                text = entertainmentArticles[0].title
                             )
                         }
                     }
                 }
-
-
-//                Button(
-//                    onClick = {
-//                        navigator.push(DetailsScreen())
-//                    }
-//                ) {
-//                    Text(text = "Check Details")
-//                }
-//
-//                Spacer(modifier = Modifier.height(16.dp))
-
-                //DEBUG
-//                val currentUser = auth.currentUserOrNull()
-//                println(currentUser?.id)
-
-
             }
-
         }
+    }
+}
+
+fun openInBrowser(url: String) {
+    try {
+        val uri = URI(url)
+        if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+            Desktop.getDesktop().browse(uri)
+        } else {
+            println("Desktop or BROWSE action not supported!")
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
     }
 }

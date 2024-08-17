@@ -12,3 +12,4 @@ but in the form of an application instead of a website
 - Kotlin
 - JetBrains Compose Multiplatform UI Framework
 - Supabase API (Postgres database)
+- NEWS Api for Kotlin - https://github.com/dfloureiro/News-API-Kotlin

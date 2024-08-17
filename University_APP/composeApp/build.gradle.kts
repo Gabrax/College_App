@@ -11,6 +11,7 @@ repositories {
     mavenCentral() // This is now the primary repository for JavaFx
     google() // For AndroidX dependencies
     //maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+    maven("https://jitpack.io")
 }
 
 kotlin {
@@ -54,6 +55,8 @@ kotlin {
             implementation("cafe.adriel.voyager:voyager-tab-navigator:1.1.0-beta02")
             implementation("cafe.adriel.voyager:voyager-transitions:1.1.0-beta02")
             implementation("com.stevdza-san:messagebarkmp:1.0.5")
+            implementation("com.github.dfloureiro:news-api-kotlin:v2.1")
+            implementation("io.reactivex.rxjava2:rxjava:2.2.21")
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
