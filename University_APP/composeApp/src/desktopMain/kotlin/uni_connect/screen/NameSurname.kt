@@ -32,6 +32,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import rememberMessageBarState
 import uni_connect.Database.fetchCurrentUsername
+import uni_connect.Database.insertDisplayName
 import uni_connect.Database.supabase
 
 
@@ -65,10 +66,11 @@ class NameSurname: Screen{
                 try {
                     val currentSession = auth.currentSessionOrNull()
                     if (currentSession != null) {
+                        insertDisplayName(userName,userSurname)
                         messageBarState.addSuccess("Successfully logged in")
                         delay(1500L)
-                        navigator.replace(MainScreen())
                         fetchCurrentUsername()
+                        navigator.replace(MainScreen())
                     }
                 } catch (e: Exception) {
                         messageBarState.addError(Exception("Invalid Credentials"))
