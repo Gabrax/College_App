@@ -2,6 +2,8 @@ package uni_connect.screen
 
 import ContentWithMessageBar
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -9,9 +11,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -23,7 +32,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import rememberMessageBarState
 import uni_connect.Database.fetchCurrentUsername
-import uni_connect.Database.insertDisplayName
 import uni_connect.Database.supabase
 
 
@@ -41,13 +49,39 @@ class NameSurname: Screen{
         var nameError by remember { mutableStateOf<String?>(null) }
         var surnameError by remember { mutableStateOf<String?>(null) }
 
+        val nameFocusRequester = remember { FocusRequester() }
+        val surnameFocusRequester = remember { FocusRequester() }
+        val buttonFocusRequester = remember { FocusRequester() }
+        val focusManager = LocalFocusManager.current
+
+        val specialCharactersToFilter = setOf(
+            ' ', '\n', '\t', '(', ')',
+            '=', '+', '[', ']', '{', '}', ';', ':', '"',
+            '\'', ',', '<', '>', '?', '/'
+        )
+
+        val configureClick = {
+            scope.launch {
+                try {
+                    val currentSession = auth.currentSessionOrNull()
+                    if (currentSession != null) {
+                        messageBarState.addSuccess("Successfully logged in")
+                        delay(1500L)
+                        navigator.replace(MainScreen())
+                        fetchCurrentUsername()
+                    }
+                } catch (e: Exception) {
+                        messageBarState.addError(Exception("Invalid Credentials"))
+                }
+            }
+        }
 
         ContentWithMessageBar(messageBarState = messageBarState){
             Column(
                 modifier = Modifier
                     .fillMaxSize(),
                 verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
 
                 Text("Enter your\ndisplay name:",
@@ -59,10 +93,15 @@ class NameSurname: Screen{
 
                 Spacer(modifier = Modifier.height(25.dp))
 
+                LaunchedEffect(Unit) {
+                    nameFocusRequester.requestFocus()
+                }
+                //!newName.all { it.isLetter() }
+
                 OutlinedTextField(
                     value = userName,
                     onValueChange = { newName ->
-                        val filtered = newName.filter { it != ' ' && it != '\n' }
+                        val filtered = newName.filter { it !in specialCharactersToFilter }
                         userName = filtered
                         nameError = if (!newName.all { it.isLetter() }) {
                             "Only can contain alphabetic characters"
@@ -82,15 +121,28 @@ class NameSurname: Screen{
                             )
                         }
                     },
+                    modifier = Modifier
+                        .focusRequester(nameFocusRequester)
+                        .onKeyEvent { event ->
+                            if (event.key == Key.Tab) {
+                                surnameFocusRequester.requestFocus()
+                                true
+                            } else {
+                                false
+                            }
+                        },
+                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+                    keyboardActions = KeyboardActions(
+                        onNext = { surnameFocusRequester.requestFocus() }
+                    )
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-
                 OutlinedTextField(
                     value = userSurname,
                     onValueChange = { newSurname ->
-                        val filtered = newSurname.filter { it != ' ' && it != '\n' }
+                        val filtered = newSurname.filter { it !in specialCharactersToFilter }
                         userSurname = filtered
                         surnameError = if (!newSurname.all { it.isLetter() }) {
                             "Only can contain alphabetic characters"
@@ -99,7 +151,6 @@ class NameSurname: Screen{
                         }
                     },
                     label = { Text("Surname") },
-                    visualTransformation = PasswordVisualTransformation(),
                     isError = surnameError != null,
                     supportingText = {
                         if (surnameError != null) {
@@ -111,28 +162,33 @@ class NameSurname: Screen{
                             )
                         }
                     },
+                    modifier = Modifier
+                        .focusRequester(surnameFocusRequester)
+                        .onKeyEvent { event ->
+                            if (event.key == Key.Tab) {
+                                focusManager.moveFocus(FocusDirection.Next)
+                                true
+                            } else {
+                                false
+                            }
+                        },
+                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done)
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
-
                 Button(
-                    onClick = {
-                        scope.launch {
-                            try {
-                                // Check if the user is logged in after sign-up
-                                val currentSession = auth.currentSessionOrNull()
-                                if (currentSession != null) {
-                                    insertDisplayName(userName,userSurname)
-                                    messageBarState.addSuccess("Successfully added display name")
-                                    delay(1500L)
-                                    fetchCurrentUsername()
-                                    navigator.replace(MainScreen())
-                                }
-                            } catch (e: Exception) {
-                                messageBarState.addError(Exception("Error appending info"))
+                    onClick = { configureClick() },
+                            modifier = Modifier
+                                .focusRequester(buttonFocusRequester)
+                                .onKeyEvent { event ->
+                            if (event.key == Key.Enter && userName.isNotEmpty() && userSurname.isNotEmpty()) {
+                                configureClick() // Trigger the button's onClick action
+                                true // Event is consumed
+                            } else {
+                                false // Event is not consumed
                             }
-                        }
-                    }
+                        },
+                    enabled = userName.isNotEmpty() && userSurname.isNotEmpty()
                 ){
                     Text(text = "Configure")
                 }

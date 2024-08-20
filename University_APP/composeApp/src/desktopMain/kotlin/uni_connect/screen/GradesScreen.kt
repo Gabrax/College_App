@@ -1,11 +1,12 @@
 package uni_connect.screen
 
 import ContentWithMessageBar
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,93 +46,73 @@ class GradesScreen: Screen {
                     .padding(horizontal = 12.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .fillMaxWidth(fraction = 1.0f)
-                        .padding(horizontal = 12.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-//                Box(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .padding(top = 24.dp)
-//                ) {
-//                    IconButton(onClick = { navigator.replace(HomeScreen()) }) {
-//                        Icon(
-//                            imageVector = Icons.Filled.Settings,
-//                            contentDescription = "Back Arrow Icon",
-//                            tint = Color.White
-//                        )
-//                    }
-//                }
+
                     Spacer(modifier = Modifier.height(24.dp))
 
                     Spacer(modifier = Modifier.height(40.dp))
-                    Row(
+
+                    Button(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(35.dp) // Set the desired height here
-                            .clip(RoundedCornerShape(size = 99.dp))
-                            .clickable {}
-                            .background(
-                                color = Color.White,
-                                shape = RoundedCornerShape(99.dp)
-                            )
+                            .clip(RoundedCornerShape(99.dp))
                             .padding(horizontal = 12.dp, vertical = 0.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                        onClick = { /* Handle button click */ },
+                        enabled = true, // Set to false if the button should be disabled
+                        shape = RoundedCornerShape(99.dp), // Adjust as needed
+                        border = BorderStroke(1.dp, Color.Black), // Optional: Add a border if desired
+                        contentPadding = PaddingValues(0.dp) // Adjust padding inside the button if needed
                     ) {
-                        Spacer(modifier = Modifier.width(12.dp))
                         Text(
-                            text = "Home",
+                            text = "Click Me", // Replace with button text
                             color = Color.Black,
                             fontWeight = FontWeight.Bold,
                         )
                     }
+
                     Spacer(modifier = Modifier.height(40.dp))
-                    Row(
+
+                    Button(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(35.dp) // Set the desired height here
-                            .clip(RoundedCornerShape(size = 99.dp))
-                            .clickable {}
-                            .background(
-                                color = Color.White,
-                                shape = RoundedCornerShape(99.dp)
-                            )
+                            .clip(RoundedCornerShape(99.dp))
                             .padding(horizontal = 12.dp, vertical = 0.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                        onClick = { /* Handle button click */ },
+                        enabled = true, // Set to false if the button should be disabled
+                        shape = RoundedCornerShape(99.dp), // Adjust as needed
+                        border = BorderStroke(1.dp, Color.Black), // Optional: Add a border if desired
+                        contentPadding = PaddingValues(0.dp) // Adjust padding inside the button if needed
                     ) {
-                        Spacer(modifier = Modifier.width(12.dp))
                         Text(
-                            text = "Grades",
+                            text = "Click Me", // Replace with button text
                             color = Color.Black,
                             fontWeight = FontWeight.Bold,
                         )
                     }
+
                     Spacer(modifier = Modifier.height(40.dp))
-                    Row(
+
+                    Button(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(35.dp) // Set the desired height here
-                            .clip(RoundedCornerShape(size = 99.dp))
-                            .clickable {}
-                            .background(
-                                color = Color.White,
-                                shape = RoundedCornerShape(99.dp)
-                            )
+                            .clip(RoundedCornerShape(99.dp))
                             .padding(horizontal = 12.dp, vertical = 0.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                        onClick = { /* Handle button click */ },
+                        enabled = true, // Set to false if the button should be disabled
+                        shape = RoundedCornerShape(99.dp), // Adjust as needed
+                        border = BorderStroke(1.dp, Color.Black), // Optional: Add a border if desired
+                        contentPadding = PaddingValues(0.dp) // Adjust padding inside the button if needed
                     ) {
-                        Spacer(modifier = Modifier.width(12.dp))
                         Text(
-                            text = "Events",
+                            text = "Click Me", // Replace with button text
                             color = Color.Black,
                             fontWeight = FontWeight.Bold,
                         )
                     }
                     Spacer(modifier = Modifier.weight(1f))
-                }
+
             }
             SpreadsheetView()
 

@@ -86,6 +86,7 @@ class LoginScreen: Screen {
                             fetchCurrentUsername()
                         }
                     } catch (e: Exception) {
+                        println(e.message)
                         messageBarState.addError(Exception("Invalid Credentials"))
                     }
                 }

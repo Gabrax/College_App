@@ -1,25 +1,18 @@
 package uni_connect.screen
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Surface
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.CurrentTab
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
@@ -75,131 +68,3 @@ private fun RowScope.TabNavigationItem(tab: Tab){
     )
 }
 
-class TestScreen1: Screen {
-    @Composable
-    override fun Content() {
-        val navigator = LocalNavigator.currentOrThrow
-        Column(
-            modifier = Modifier
-                .fillMaxHeight()
-                .fillMaxWidth(fraction = 0.2f)
-                .background(color = Color.Black)
-                .padding(horizontal = 12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .fillMaxWidth(fraction = 1.0f)
-                    .padding(horizontal = 12.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-//                Box(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .padding(top = 24.dp)
-//                ) {
-//                    IconButton(onClick = { navigator.replace(HomeScreen()) }) {
-//                        Icon(
-//                            imageVector = Icons.Filled.Settings,
-//                            contentDescription = "Back Arrow Icon",
-//                            tint = Color.White
-//                        )
-//                    }
-//                }
-                Spacer(modifier = Modifier.height(24.dp))
-
-                Spacer(modifier = Modifier.height(40.dp))
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(35.dp) // Set the desired height here
-                        .clip(RoundedCornerShape(size = 99.dp))
-                        .clickable { navigator.replace(HomeScreen()) }
-                        .background(
-                            color = Color.White,
-                            shape = RoundedCornerShape(99.dp)
-                        )
-                        .padding(horizontal = 12.dp, vertical = 0.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Text(
-                        text = "Home",
-                        color = Color.Black,
-                        fontWeight = FontWeight.Bold,
-                    )
-                }
-                Spacer(modifier = Modifier.height(40.dp))
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(35.dp) // Set the desired height here
-                        .clip(RoundedCornerShape(size = 99.dp))
-                        .clickable { navigator.replace(HomeScreen()) }
-                        .background(
-                            color = Color.White,
-                            shape = RoundedCornerShape(99.dp)
-                        )
-                        .padding(horizontal = 12.dp, vertical = 0.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Text(
-                        text = "Grades",
-                        color = Color.Black,
-                        fontWeight = FontWeight.Bold,
-                    )
-                }
-                Spacer(modifier = Modifier.height(40.dp))
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(35.dp) // Set the desired height here
-                        .clip(RoundedCornerShape(size = 99.dp))
-                        .clickable { navigator.replace(HomeScreen()) }
-                        .background(
-                            color = Color.White,
-                            shape = RoundedCornerShape(99.dp)
-                        )
-                        .padding(horizontal = 12.dp, vertical = 0.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Text(
-                        text = "Events",
-                        color = Color.Black,
-                        fontWeight = FontWeight.Bold,
-                    )
-                }
-
-                Spacer(modifier = Modifier.weight(1f))
-
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(35.dp) // Set the desired height here
-                        .clip(RoundedCornerShape(size = 99.dp))
-                        .clickable { navigator.replace(HomeScreen()) }
-                        .background(
-                            color = Color.White,
-                            shape = RoundedCornerShape(99.dp)
-                        )
-                        .padding(horizontal = 12.dp, vertical = 0.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Text(
-                        text = "Logout",
-                        color = Color.Black,
-                        fontWeight = FontWeight.Bold,
-                    )
-                }
-                Spacer(modifier = Modifier.height(24.dp))
-            }
-        }
-    }
-}
