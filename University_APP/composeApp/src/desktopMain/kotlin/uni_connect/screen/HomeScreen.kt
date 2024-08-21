@@ -130,7 +130,7 @@ class HomeScreen : Screen {
                             )
                             Spacer(modifier = Modifier.height(12.dp))
 
-                            if(!allListsEmpty){
+                            if(technologyArticles.isNotEmpty()){
                                 Text(
                                     fontSize = MaterialTheme.typography.bodyMedium.fontSize,
                                     text = technologyArticles[0].title
@@ -163,7 +163,7 @@ class HomeScreen : Screen {
                                 text = "\uD83D\uDD2C"
                             )
                             Spacer(modifier = Modifier.height(12.dp))
-                            if(!allListsEmpty){
+                            if(scienceArticles.isNotEmpty()){
                                 Text(
                                     fontSize = MaterialTheme.typography.bodyMedium.fontSize,
                                     text = scienceArticles[0].title
@@ -196,7 +196,7 @@ class HomeScreen : Screen {
                                 text = "\uD83D\uDC8A"
                             )
                             Spacer(modifier = Modifier.height(12.dp))
-                            if(!allListsEmpty){
+                            if(healthArticles.isNotEmpty()){
                                 Text(
                                     fontSize = MaterialTheme.typography.bodyMedium.fontSize,
                                     text = healthArticles[0].title
@@ -229,7 +229,7 @@ class HomeScreen : Screen {
                                 text = "\uD83C\uDFC5"
                             )
                             Spacer(modifier = Modifier.height(12.dp))
-                            if(!allListsEmpty){
+                            if(sportsArticles.isNotEmpty()){
                                 Text(
                                     fontSize = MaterialTheme.typography.bodyMedium.fontSize,
                                     text = sportsArticles[0].title
@@ -262,7 +262,7 @@ class HomeScreen : Screen {
                                 text = "\uD83D\uDC54"
                             )
                             Spacer(modifier = Modifier.height(12.dp))
-                            if(!allListsEmpty){
+                            if(businessArticles.isNotEmpty()){
                                 Text(
                                     fontSize = MaterialTheme.typography.bodyMedium.fontSize,
                                     text = businessArticles[0].title
@@ -295,7 +295,7 @@ class HomeScreen : Screen {
                                 text = "\uD83D\uDCF0"
                             )
                             Spacer(modifier = Modifier.height(12.dp))
-                            if(!allListsEmpty){
+                            if(entertainmentArticles.isNotEmpty()){
                                 Text(
                                     fontSize = MaterialTheme.typography.bodyMedium.fontSize,
                                     text = entertainmentArticles[0].title

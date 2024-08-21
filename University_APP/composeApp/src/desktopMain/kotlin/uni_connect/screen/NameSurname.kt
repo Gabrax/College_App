@@ -31,7 +31,7 @@ import io.github.jan.supabase.gotrue.auth
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import rememberMessageBarState
-import uni_connect.Database.fetchCurrUserGrades
+import uni_connect.Database.fetchCurrUser1YGrades
 import uni_connect.Database.fetchCurrentUsername
 import uni_connect.Database.insertDisplayName
 import uni_connect.Database.supabase
@@ -71,7 +71,9 @@ class NameSurname: Screen{
                         messageBarState.addSuccess("Successfully logged in")
                         delay(1500L)
                         fetchCurrentUsername()
-                        currentSession.email?.let { fetchCurrUserGrades(it) }
+                        currentSession.email?.let { fetchCurrUser1YGrades(it) }
+//                        currentSession.email?.let { fetchCurrUser2YGrades(it) }
+//                        currentSession.email?.let { fetchCurrUser3YGrades(it) }
                         navigator.replace(MainScreen())
                     }
                 } catch (e: Exception) {

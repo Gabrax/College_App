@@ -1,24 +1,26 @@
 package uni_connect.Database
 
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import io.github.jan.supabase.gotrue.auth
 import io.github.jan.supabase.gotrue.providers.builtin.Email
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.Columns
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import uni_connect.screen.LoginScreen
 
 
 private var _users = mutableStateOf<List<User>>(emptyList())
 val users: State<List<User>> get() = _users
 
-private var _grades = mutableStateOf<List<GradeData>>(emptyList())
-val grades: State<List<GradeData>> get() = _grades
+private var _1ygrades = mutableStateOf<List<GradeData>>(emptyList())
+val oneygrades: State<List<GradeData>> get() = _1ygrades
+
+private var _2ygrades = mutableStateOf<List<GradeData>>(emptyList())
+val twoygrades: State<List<GradeData>> get() = _2ygrades
+
+private var _3ygrades = mutableStateOf<List<GradeData>>(emptyList())
+val threeygrades: State<List<GradeData>> get() = _3ygrades
 
 // Fetch users from Supabase
 suspend fun fetchUsers() {
@@ -42,22 +44,60 @@ suspend fun fetchUsers() {
     }
 }
 
-suspend fun fetchCurrUserGrades(user:String) {
+suspend fun fetchCurrUser1YGrades(user:String) {
     withContext(Dispatchers.IO) {
         try {
             // Fetch the data from Supabase
             val fetchedgrades: List<GradeData> = supabase
-                .from("user_$user")
+                .from("user_1y_$user")
                 .select()
                 .decodeList()
 
 
-            _grades.value = fetchedgrades
-            println("Fetched Users: $fetchedgrades")
+            _1ygrades.value = fetchedgrades
+            //println("Fetched Users: $fetchedgrades")
         } catch (e: Exception) {
 
             e.printStackTrace()
-            _grades.value = emptyList()
+            _1ygrades.value = emptyList()
+        }
+    }
+}
+suspend fun fetchCurrUser2YGrades(user:String) {
+    withContext(Dispatchers.IO) {
+        try {
+            // Fetch the data from Supabase
+            val fetchedgrades: List<GradeData> = supabase
+                .from("user_2y_$user")
+                .select()
+                .decodeList()
+
+
+            _2ygrades.value = fetchedgrades
+            //println("Fetched Users: $fetchedgrades")
+        } catch (e: Exception) {
+
+            e.printStackTrace()
+            _2ygrades.value = emptyList()
+        }
+    }
+}
+suspend fun fetchCurrUser3YGrades(user:String) {
+    withContext(Dispatchers.IO) {
+        try {
+            // Fetch the data from Supabase
+            val fetchedgrades: List<GradeData> = supabase
+                .from("user_3y_$user")
+                .select()
+                .decodeList()
+
+
+            _3ygrades.value = fetchedgrades
+            //println("Fetched Users: $fetchedgrades")
+        } catch (e: Exception) {
+
+            e.printStackTrace()
+            _3ygrades.value = emptyList()
         }
     }
 }
@@ -121,8 +161,4 @@ suspend fun signInWithEmail(email: String, password: String) {
     }
 }
 
-@Composable
-fun logoutUser(isLoggedIn: Boolean ) {
-    val navigator = LocalNavigator.currentOrThrow
-    navigator.replace(LoginScreen())
-}
+

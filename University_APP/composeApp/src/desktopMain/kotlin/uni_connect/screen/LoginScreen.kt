@@ -79,9 +79,11 @@ class LoginScreen: Screen {
                         if (currentSession != null) {
                             messageBarState.addSuccess("Successfully logged in")
                             delay(1500L)
-                            navigator.replace(MainScreen())
                             fetchCurrentUsername()
-                            currentSession.email?.let { fetchCurrUserGrades(it) }
+                            currentSession.email?.let { fetchCurrUser1YGrades(it) }
+                            navigator.replace(MainScreen())
+//                            currentSession.email?.let { fetchCurrUser2YGrades(it) }
+//                            currentSession.email?.let { fetchCurrUser3YGrades(it) }
                         }
                     } catch (e: Exception) {
                         println(e.message)
@@ -98,6 +100,7 @@ class LoginScreen: Screen {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+
 
                 Image(painter = painterResource(Res.drawable.Unilogo), modifier = Modifier.size(150.dp), contentDescription = "")
                 Image(painter = painterResource(Res.drawable.Unititle),modifier = Modifier.width(300.dp).height(50.dp), contentDescription = "")

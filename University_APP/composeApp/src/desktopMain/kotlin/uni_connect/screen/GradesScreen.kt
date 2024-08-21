@@ -10,10 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,12 +29,8 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import io.github.jan.supabase.gotrue.auth
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import rememberMessageBarState
-import uni_connect.Database.GradeData
-import uni_connect.Database.fetchCurrUserGrades
-import uni_connect.Database.grades
-import uni_connect.Database.supabase
+import uni_connect.Database.*
 
 class GradesScreen: Screen {
     @Composable
@@ -49,9 +42,15 @@ class GradesScreen: Screen {
 
         val user = auth.currentUserOrNull()
 
-        val gradeList = grades.value
+        val gradeList = oneygrades.value
 
         val listSize = gradeList.size
+
+        var oneYbool by mutableStateOf(true)
+        var twoYbool by mutableStateOf(false)
+        var threeYbool by mutableStateOf(false)
+
+
 
 
         ContentWithMessageBar(messageBarState = messageBarState){
@@ -59,7 +58,7 @@ class GradesScreen: Screen {
                 modifier = Modifier
                     .fillMaxHeight()
                     .fillMaxWidth(fraction = 0.2f)
-                    .background(color = Color.Black)
+                    .background(color = Color(0xFF2F282A))
                     .padding(horizontal = 12.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -77,8 +76,11 @@ class GradesScreen: Screen {
                         onClick = {
                             scope.launch {
                                 if (user != null) {
-                                    user.email?.let { fetchCurrUserGrades(it)
-                                        println(listSize)
+                                    user.email?.let { fetchCurrUser1YGrades(it)
+                                        //println(listSize)
+                                        oneYbool = true
+                                        twoYbool = false
+                                        threeYbool = false
                                     }
                                 }
                             }
@@ -89,7 +91,7 @@ class GradesScreen: Screen {
                         contentPadding = PaddingValues(0.dp)
                     ) {
                         Text(
-                            text = "Refresh",
+                            text = "First Year",
                             color = Color.Black,
                             fontWeight = FontWeight.Bold,
                         )
@@ -103,14 +105,25 @@ class GradesScreen: Screen {
                             .height(35.dp)
                             .clip(RoundedCornerShape(99.dp))
                             .padding(horizontal = 12.dp, vertical = 0.dp),
-                        onClick = {  },
+                        onClick = {
+                            scope.launch {
+                                if (user != null) {
+                                    user.email?.let { fetchCurrUser2YGrades(it)
+                                        //println(listSize)
+                                        oneYbool = false
+                                        twoYbool = true
+                                        threeYbool = false
+                                    }
+                                }
+                            }
+                        },
                         enabled = true,
                         shape = RoundedCornerShape(99.dp),
                         border = BorderStroke(1.dp, Color.Black),
                         contentPadding = PaddingValues(0.dp)
                     ) {
                         Text(
-                            text = "",
+                            text = "Second Year",
                             color = Color.Black,
                             fontWeight = FontWeight.Bold,
                         )
@@ -124,14 +137,25 @@ class GradesScreen: Screen {
                             .height(35.dp)
                             .clip(RoundedCornerShape(99.dp))
                             .padding(horizontal = 12.dp, vertical = 0.dp),
-                        onClick = {  },
+                        onClick = {
+                            scope.launch {
+                                if (user != null) {
+                                    user.email?.let { fetchCurrUser3YGrades(it)
+                                        //println(listSize)
+                                        oneYbool = false
+                                        twoYbool = false
+                                        threeYbool = true
+                                    }
+                                }
+                            }
+                        },
                         enabled = true,
                         shape = RoundedCornerShape(99.dp),
                         border = BorderStroke(1.dp, Color.Black),
                         contentPadding = PaddingValues(0.dp)
                     ) {
                         Text(
-                            text = "",
+                            text = "Third Year",
                             color = Color.Black,
                             fontWeight = FontWeight.Bold,
                         )
@@ -139,17 +163,23 @@ class GradesScreen: Screen {
                     Spacer(modifier = Modifier.weight(1f))
 
             }
-            SpreadsheetView()
+
+            if(oneYbool){
+                Spreadsheet1YView()
+            }else if(twoYbool){
+                Spreadsheet2YView()
+            }else if(threeYbool){
+                Spreadsheet3YView()
+            }
 
         }
     }
 }
 
 @Composable
-@Preview
-fun SpreadsheetView() {
+fun Spreadsheet1YView() {
 
-    val gradeList = grades.value
+    val gradeList = oneygrades.value
 
     LazyColumn(
         modifier = Modifier
@@ -178,7 +208,82 @@ fun SpreadsheetView() {
         }
 
         items(gradeList.indices.toList()) { index ->
-            ItemGrid(grades = grades, index = index)
+            ItemGrid(grades = oneygrades, index = index)
+        }
+
+    }
+}
+@Composable
+fun Spreadsheet2YView() {
+
+    val gradeList = twoygrades.value
+
+    LazyColumn(
+        modifier = Modifier
+            .width(780.dp)
+            .padding(8.dp)
+            .offset(x = 200.dp)
+    ) {
+
+        item {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp)
+                    .padding(16.dp)
+            ) {
+                Text(
+                    text = "Second year",
+                    fontSize = MaterialTheme.typography.displaySmall.fontSize,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                )
+            }
+        }
+
+        items(gradeList.indices.toList()) { index ->
+            ItemGrid(grades = twoygrades, index = index)
+        }
+
+    }
+}
+
+@Composable
+fun Spreadsheet3YView() {
+
+    val gradeList = threeygrades.value
+
+    LazyColumn(
+        modifier = Modifier
+            .width(780.dp)
+            .padding(8.dp)
+            .offset(x = 200.dp)
+    ) {
+
+        item {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp)
+                    .padding(16.dp)
+            ) {
+                Text(
+                    text = "Third year",
+                    fontSize = MaterialTheme.typography.displaySmall.fontSize,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                )
+            }
+        }
+
+        items(gradeList.indices.toList()) { index ->
+            ItemGrid(grades = threeygrades, index = index)
         }
 
     }
@@ -239,7 +344,7 @@ fun createGradeAnnotatedString(gradeData: GradeData?): AnnotatedString {
                 }
             }
         } else {
-            append("No data available")
+            append("No grades available")
         }
     }
 }

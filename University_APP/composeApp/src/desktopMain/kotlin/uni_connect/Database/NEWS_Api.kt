@@ -25,6 +25,7 @@ val allListsEmpty = listOf(
     entertainmentArticles
 ).all { it.isEmpty() }
 
+
 @Composable
 fun techNews() {
     newsApiRepository.getTopHeadlines(category = Category.TECHNOLOGY, country = Country.US, pageSize = 1, page = 1)
