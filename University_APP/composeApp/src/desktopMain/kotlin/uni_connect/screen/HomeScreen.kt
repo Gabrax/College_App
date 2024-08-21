@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -21,10 +22,13 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
+import io.kamel.image.KamelImage
+import io.kamel.image.asyncPainterResource
 import rememberMessageBarState
 import uni_connect.Database.*
 import java.awt.Desktop
@@ -86,6 +90,7 @@ class HomeScreen : Screen {
         val messageBarState = rememberMessageBarState()
 
         ContentWithMessageBar(messageBarState = messageBarState){
+            val painter = asyncPainterResource(bucket)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -102,7 +107,16 @@ class HomeScreen : Screen {
                         modifier = Modifier.padding(8.dp)
                     )
                 }
+                KamelImage(
+                    resource = painter,
+                    contentDescription = null,
+                    modifier = Modifier.size(50.dp).clip(CircleShape),
+                    contentScale = ContentScale.Crop
+                )
             }
+
+
+
 
             LazyVerticalGrid(
                 columns = GridCells.Fixed(3), // 3 columns

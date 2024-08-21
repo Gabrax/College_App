@@ -76,7 +76,8 @@ class GradesScreen: Screen {
                         onClick = {
                             scope.launch {
                                 if (user != null) {
-                                    user.email?.let { fetchCurrUser1YGrades(it)
+                                    user.email?.let {
+                                        fetchCurrUser1YGrades(it)
                                         //println(listSize)
                                         oneYbool = true
                                         twoYbool = false

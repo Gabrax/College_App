@@ -1,11 +1,14 @@
 package uni_connect.Database
 
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import io.github.jan.supabase.gotrue.auth
 import io.github.jan.supabase.gotrue.providers.builtin.Email
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.Columns
+import io.github.jan.supabase.storage.storage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -159,6 +162,16 @@ suspend fun signInWithEmail(email: String, password: String) {
         this.email = email
         this.password = password
     }
+}
+
+var bucket by mutableStateOf("")
+
+fun fetchCurrUserImage(){
+    val user = supabase.auth.currentUserOrNull()
+    val bruh: String = user?.email.toString()
+    bucket = supabase.storage.from("userimages").publicUrl(bruh)
+
+    println("Fetched Image image: $bucket")
 }
 
 

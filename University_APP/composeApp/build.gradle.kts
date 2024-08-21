@@ -59,11 +59,13 @@ kotlin {
             implementation("com.github.dfloureiro:news-api-kotlin:v2.1")
             implementation("io.reactivex.rxjava2:rxjava:2.2.21")
             implementation("com.darkrockstudios:mpfilepicker:3.1.0")
+            implementation("media.kamel:kamel-image:0.9.5")
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
         }
+
     }
 }
 

@@ -36,13 +36,9 @@ import io.github.jan.supabase.storage.upload
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import rememberMessageBarState
-import uni_connect.Database.fetchCurrUser1YGrades
-import uni_connect.Database.fetchCurrentUsername
-import uni_connect.Database.insertDisplayName
-import uni_connect.Database.supabase
+import uni_connect.Database.*
 import java.awt.image.BufferedImage
 import java.io.File
-import java.util.*
 import javax.imageio.ImageIO
 
 
@@ -89,9 +85,8 @@ class NameSurname: Screen{
                         messageBarState.addSuccess("Successfully logged in")
                         delay(1500L)
                         fetchCurrentUsername()
+                        fetchCurrUserImage()
                         currentSession.email?.let { fetchCurrUser1YGrades(it) }
-//                        currentSession.email?.let { fetchCurrUser2YGrades(it) }
-//                        currentSession.email?.let { fetchCurrUser3YGrades(it) }
                         navigator.replace(MainScreen())
                     }
                 } catch (e: Exception) {
@@ -233,9 +228,14 @@ class NameSurname: Screen{
                                 scope.launch {
                                     try{
                                         configureClick()
-                                        val filename = UUID.randomUUID().toString()
-                                        val bucket = storage.from("userimages")
-                                        bucket.upload(filename,filepath,upsert = false)
+                                        val gimmeemail = auth.currentUserOrNull()
+                                            val filename = gimmeemail?.email
+                                            val bucket = storage.from("userimages")
+                                            if (filename != null) {
+                                                bucket.upload(filename,filepath,upsert = false)
+                                            }
+                                            fetchCurrUserImage()
+
                                     } catch (e: Exception) {
                                         e.printStackTrace()
                                     }
@@ -260,42 +260,6 @@ class NameSurname: Screen{
     }
 }
 
-@Composable
-fun SelectImage() {
-    var pathSingleChosen by remember { mutableStateOf("") }
-    var showFilePicker by remember { mutableStateOf(false) }
-    var imageBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
 
-    val fileType = listOf("jpg", "png", "jpeg")
-
-    OutlinedButton(
-        onClick = {
-            showFilePicker = true
-        },
-        modifier = Modifier.size(150.dp),
-        shape = CircleShape,
-        border = BorderStroke(1.dp, Color.Black),
-        contentPadding = PaddingValues(0.dp),
-        colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Gray)
-    ) {
-        imageBitmap?.let { bitmap ->
-            Image(
-                bitmap = bitmap,
-                contentDescription = null, // Provide a content description for accessibility
-                modifier = Modifier
-            )
-        }
-    }
-
-    if (showFilePicker) {
-        FilePicker(show = showFilePicker, fileExtensions = fileType) { file ->
-            pathSingleChosen = file?.path ?: "none selected"
-            val filepath = File(pathSingleChosen)
-            val bufferedImage: BufferedImage = ImageIO.read(filepath)
-            imageBitmap = bufferedImage.toComposeImageBitmap()
-            showFilePicker = false
-        }
-    }
-}
 
 

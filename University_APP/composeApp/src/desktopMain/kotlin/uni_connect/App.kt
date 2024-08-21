@@ -39,8 +39,5 @@ fun App() {
     MaterialTheme(colorScheme = colors) {
         Navigator(LoginScreen()) { SlideTransition(it, orientation = SlideOrientation.Vertical) }
     }
-
-
-
 }
 

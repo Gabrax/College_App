@@ -70,6 +70,7 @@ class LoginScreen: Screen {
                     if (currentSession != null) {
                         messageBarState.addSuccess("Successfully created account")
                         delay(1500L)
+                        fetchCurrUserImage()
                         navigator.replace(NameSurname())
                     }
                 } catch (e: Exception) {
@@ -81,6 +82,7 @@ class LoginScreen: Screen {
                             delay(1500L)
                             fetchCurrentUsername()
                             currentSession.email?.let { fetchCurrUser1YGrades(it) }
+                            fetchCurrUserImage()
                             navigator.replace(MainScreen())
 //                            currentSession.email?.let { fetchCurrUser2YGrades(it) }
 //                            currentSession.email?.let { fetchCurrUser3YGrades(it) }
