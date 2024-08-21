@@ -31,10 +31,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import rememberMessageBarState
-import uni_connect.Database.fetchCurrentUsername
-import uni_connect.Database.signInWithEmail
-import uni_connect.Database.signUpNewUserWithEmail
-import uni_connect.Database.supabase
+import uni_connect.Database.*
 import university_connect.composeapp.generated.resources.Res
 import university_connect.composeapp.generated.resources.Unilogo
 import university_connect.composeapp.generated.resources.Unititle
@@ -78,12 +75,13 @@ class LoginScreen: Screen {
                 } catch (e: Exception) {
                     try {
                         signInWithEmail(userEmail, userPassword)
-                        val currentSession = auth.currentSessionOrNull()
+                        val currentSession = auth.currentUserOrNull()
                         if (currentSession != null) {
                             messageBarState.addSuccess("Successfully logged in")
                             delay(1500L)
                             navigator.replace(MainScreen())
                             fetchCurrentUsername()
+                            currentSession.email?.let { fetchCurrUserGrades(it) }
                         }
                     } catch (e: Exception) {
                         println(e.message)

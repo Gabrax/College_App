@@ -12,7 +12,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -84,7 +83,6 @@ class HomeScreen : Screen {
 
     @Composable
     override fun Content() {
-        val scope = rememberCoroutineScope()
         val messageBarState = rememberMessageBarState()
 
         ContentWithMessageBar(messageBarState = messageBarState){

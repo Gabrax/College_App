@@ -17,6 +17,9 @@ import uni_connect.screen.LoginScreen
 private var _users = mutableStateOf<List<User>>(emptyList())
 val users: State<List<User>> get() = _users
 
+private var _grades = mutableStateOf<List<GradeData>>(emptyList())
+val grades: State<List<GradeData>> get() = _grades
+
 // Fetch users from Supabase
 suspend fun fetchUsers() {
     withContext(Dispatchers.IO) {
@@ -36,6 +39,26 @@ suspend fun fetchUsers() {
                 _users.value = emptyList()
             }
 
+    }
+}
+
+suspend fun fetchCurrUserGrades(user:String) {
+    withContext(Dispatchers.IO) {
+        try {
+            // Fetch the data from Supabase
+            val fetchedgrades: List<GradeData> = supabase
+                .from("user_$user")
+                .select()
+                .decodeList()
+
+
+            _grades.value = fetchedgrades
+            println("Fetched Users: $fetchedgrades")
+        } catch (e: Exception) {
+
+            e.printStackTrace()
+            _grades.value = emptyList()
+        }
     }
 }
 
