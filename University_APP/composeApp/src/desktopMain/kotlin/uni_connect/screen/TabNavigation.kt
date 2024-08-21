@@ -67,6 +67,31 @@ object Grades : Tab {
     }
 }
 
+object Chat : Tab {
+    private fun readResolve(): Any = Grades
+
+    override val options: TabOptions
+        @Composable
+        get() {
+            val title = "Chat"
+            val icon = rememberVectorPainter(Icons.Default.Home)
+
+            return remember {
+                TabOptions(
+                    index = 2u,
+                    title = title,
+                    icon = icon
+                )
+            }
+        }
+
+    @Composable
+    override fun Content() {
+        Navigator(LiveChat()) { navigator ->
+            SlideTransition(navigator) }
+    }
+}
+
 var isLoggedIn by mutableStateOf(true)
 
 object Logout : Tab {

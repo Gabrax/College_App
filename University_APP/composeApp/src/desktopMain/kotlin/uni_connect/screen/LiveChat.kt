@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 import uni_connect.Database.fetchUsers
 import uni_connect.Database.users
 
-class DetailsScreen : Screen {
+class LiveChat : Screen {
 
 
     private var showContent by mutableStateOf(false)

@@ -34,6 +34,7 @@ class MainScreen: Screen {
                         NavigationBar {
                             TabNavigationItem(tab = HomeTab)
                             TabNavigationItem(tab = Grades)
+                            TabNavigationItem(tab = Chat)
                             TabNavigationItem(tab = Logout)
                         }
                     }

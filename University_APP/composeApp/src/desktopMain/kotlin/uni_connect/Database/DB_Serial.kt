@@ -4,6 +4,7 @@ import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.gotrue.Auth
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.serializer.MoshiSerializer
+import io.github.jan.supabase.storage.Storage
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
@@ -18,6 +19,7 @@ val supabase = createSupabaseClient(SUPABASE_URL, SUPABASE_KEY) {
         //alwaysAutoRefresh = false
         autoLoadFromStorage = false
     }
+    install(Storage)
     defaultSerializer = MoshiSerializer() // You can use MoshiSerializer if needed
 }
 

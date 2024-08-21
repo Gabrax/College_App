@@ -1,13 +1,13 @@
 package uni_connect.screen
 
 import ContentWithMessageBar
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -15,6 +15,8 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.toComposeImageBitmap
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
@@ -27,7 +29,10 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.darkrockstudios.libraries.mpfilepicker.FilePicker
 import io.github.jan.supabase.gotrue.auth
+import io.github.jan.supabase.storage.storage
+import io.github.jan.supabase.storage.upload
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import rememberMessageBarState
@@ -35,6 +40,10 @@ import uni_connect.Database.fetchCurrUser1YGrades
 import uni_connect.Database.fetchCurrentUsername
 import uni_connect.Database.insertDisplayName
 import uni_connect.Database.supabase
+import java.awt.image.BufferedImage
+import java.io.File
+import java.util.*
+import javax.imageio.ImageIO
 
 
 class NameSurname: Screen{
@@ -46,6 +55,7 @@ class NameSurname: Screen{
         val scope = rememberCoroutineScope()
 
         val auth = remember { supabase.auth }
+        val storage = remember { supabase.storage }
         var userName by remember { mutableStateOf("") }
         var userSurname by remember { mutableStateOf("") }
         var nameError by remember { mutableStateOf<String?>(null) }
@@ -61,6 +71,14 @@ class NameSurname: Screen{
             '=', '+', '[', ']', '{', '}', ';', ':', '"',
             '\'', ',', '<', '>', '?', '/'
         )
+
+        var pathSingleChosen by remember { mutableStateOf("") }
+        var showFilePicker by remember { mutableStateOf(false) }
+        var imageBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
+
+        val fileType = listOf("jpg", "png", "jpeg")
+
+        lateinit var filepath: File
 
         val configureClick = {
             scope.launch {
@@ -90,6 +108,35 @@ class NameSurname: Screen{
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
 
+                OutlinedButton(
+                    onClick = {
+                        showFilePicker = true
+                    },
+                    modifier = Modifier.size(150.dp),
+                    shape = CircleShape,
+                    border = BorderStroke(1.dp, Color.Black),
+                    contentPadding = PaddingValues(0.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Gray)
+                ) {
+                    imageBitmap?.let { bitmap ->
+                        Image(
+                            bitmap = bitmap,
+                            contentDescription = null, // Provide a content description for accessibility
+                            modifier = Modifier
+                        )
+                    }
+                }
+
+                if (showFilePicker) {
+                    FilePicker(show = showFilePicker, fileExtensions = fileType) { file ->
+                        pathSingleChosen = file?.path ?: "none selected"
+                        filepath = File(pathSingleChosen)
+                        val bufferedImage: BufferedImage = ImageIO.read(filepath)
+                        imageBitmap = bufferedImage.toComposeImageBitmap()
+                        showFilePicker = false
+                    }
+                }
+
                 Text("Enter your\ndisplay name:",
                     modifier = Modifier.wrapContentSize(Alignment.Center),
                     color = Color.White,
@@ -97,12 +144,11 @@ class NameSurname: Screen{
                     fontSize = 25.sp
                 )
 
-                Spacer(modifier = Modifier.height(25.dp))
+                //Spacer(modifier = Modifier.height(25.dp))
 
                 LaunchedEffect(Unit) {
                     nameFocusRequester.requestFocus()
                 }
-                //!newName.all { it.isLetter() }
 
                 OutlinedTextField(
                     value = userName,
@@ -183,7 +229,18 @@ class NameSurname: Screen{
 
                 Spacer(modifier = Modifier.height(24.dp))
                 Button(
-                    onClick = { configureClick() },
+                    onClick = {
+                                scope.launch {
+                                    try{
+                                        configureClick()
+                                        val filename = UUID.randomUUID().toString()
+                                        val bucket = storage.from("userimages")
+                                        bucket.upload(filename,filepath,upsert = false)
+                                    } catch (e: Exception) {
+                                        e.printStackTrace()
+                                    }
+                            }
+                              },
                             modifier = Modifier
                                 .focusRequester(buttonFocusRequester)
                                 .onKeyEvent { event ->
@@ -202,3 +259,43 @@ class NameSurname: Screen{
         }
     }
 }
+
+@Composable
+fun SelectImage() {
+    var pathSingleChosen by remember { mutableStateOf("") }
+    var showFilePicker by remember { mutableStateOf(false) }
+    var imageBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
+
+    val fileType = listOf("jpg", "png", "jpeg")
+
+    OutlinedButton(
+        onClick = {
+            showFilePicker = true
+        },
+        modifier = Modifier.size(150.dp),
+        shape = CircleShape,
+        border = BorderStroke(1.dp, Color.Black),
+        contentPadding = PaddingValues(0.dp),
+        colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Gray)
+    ) {
+        imageBitmap?.let { bitmap ->
+            Image(
+                bitmap = bitmap,
+                contentDescription = null, // Provide a content description for accessibility
+                modifier = Modifier
+            )
+        }
+    }
+
+    if (showFilePicker) {
+        FilePicker(show = showFilePicker, fileExtensions = fileType) { file ->
+            pathSingleChosen = file?.path ?: "none selected"
+            val filepath = File(pathSingleChosen)
+            val bufferedImage: BufferedImage = ImageIO.read(filepath)
+            imageBitmap = bufferedImage.toComposeImageBitmap()
+            showFilePicker = false
+        }
+    }
+}
+
+

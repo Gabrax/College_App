@@ -41,6 +41,7 @@ kotlin {
             implementation("io.github.jan-tennert.supabase:postgrest-kt")
             implementation("io.github.jan-tennert.supabase:gotrue-kt")
             implementation("io.github.jan-tennert.supabase:realtime-kt")
+            implementation("io.github.jan-tennert.supabase:storage-kt")
             implementation("io.ktor:ktor-client-content-negotiation:2.3.4")
             implementation("io.ktor:ktor-client-cio:2.3.4")
             implementation("io.ktor:ktor-client-core:2.3.4")
@@ -57,6 +58,7 @@ kotlin {
             implementation("com.stevdza-san:messagebarkmp:1.0.5")
             implementation("com.github.dfloureiro:news-api-kotlin:v2.1")
             implementation("io.reactivex.rxjava2:rxjava:2.2.21")
+            implementation("com.darkrockstudios:mpfilepicker:3.1.0")
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
