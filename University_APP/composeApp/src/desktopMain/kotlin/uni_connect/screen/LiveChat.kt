@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -12,14 +14,19 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import io.github.jan.supabase.gotrue.auth
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.realtime.PostgresAction
 import io.github.jan.supabase.realtime.channel
 import io.github.jan.supabase.realtime.postgresChangeFlow
+import io.kamel.image.KamelImage
+import io.kamel.image.asyncPainterResource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -27,6 +34,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import uni_connect.Database.LiveChatMessage
+import uni_connect.Database.bucket
 import uni_connect.Database.currentUserProfile
 import uni_connect.Database.supabase
 
@@ -115,11 +123,20 @@ fun insertMessage(name: String, surname: String, email: String, messageContent: 
 
 @Composable
 fun ChatScreen(liveChatMessages: List<LiveChatMessage>, currentUserId: String) {
+    val painter = asyncPainterResource(bucket)
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(liveChatMessages) {
+        if (liveChatMessages.isNotEmpty()) {
+            listState.scrollToItem(liveChatMessages.size - 1) // Scroll to the last item (most recent message)
+        }
+    }
     LazyColumn(
+        state = listState,
         modifier = Modifier
             .fillMaxSize()
             .padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 100.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         items(liveChatMessages) { chatMessage ->
             val isCurrentUser = chatMessage.email == currentUserId
@@ -141,7 +158,7 @@ fun ChatScreen(liveChatMessages: List<LiveChatMessage>, currentUserId: String) {
                 Column(
                     modifier = Modifier
                         .background(bubbleColor, bubbleShape)
-                        .padding(12.dp)
+                        .padding(8.dp)
                         .widthIn(max = 300.dp),
                     horizontalAlignment = alignment
                 ) {
@@ -150,21 +167,54 @@ fun ChatScreen(liveChatMessages: List<LiveChatMessage>, currentUserId: String) {
                             text = "${chatMessage.name} ${chatMessage.surname}",
                             style = MaterialTheme.typography.bodySmall,
                             color = Color.Gray,
-                            modifier = Modifier.padding(bottom = 4.dp)
+                            modifier = Modifier.padding(bottom = 2.dp),
+                            fontSize = 12.sp
                         )
                     }
-                    Text(
-                        text = chatMessage.message,
-                        color = textColor,
-                        style = MaterialTheme.typography.displaySmall
-                    )
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        if (!isCurrentUser) {
+                            KamelImage(
+                                resource = painter,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .size(24.dp)
+                                    .clip(CircleShape)
+                                    .align(Alignment.CenterVertically), // Ensures the image stays aligned with the text
+                                contentScale = ContentScale.Crop
+                            )
+
+                            Spacer(modifier = Modifier.width(8.dp)) // Space between the image and the text
+                        }
+
+                        Text(
+                            text = chatMessage.message,
+                            color = textColor,
+                            style = MaterialTheme.typography.bodySmall,
+                            fontSize = 12.sp,
+                            modifier = Modifier
+                                .padding(end = if (isCurrentUser) 5.dp else 0.dp) // Adjust padding for current user
+                                .widthIn(max = 240.dp) // Set a maximum width for the text
+                        )
+
+                        if (isCurrentUser) {
+                            Spacer(modifier = Modifier.width(8.dp)) // Space between the text and the image
+
+                            KamelImage(
+                                resource = painter,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .size(24.dp)
+                                    .clip(CircleShape)
+                                    .align(Alignment.CenterVertically), // Ensures the image stays aligned with the text
+                                contentScale = ContentScale.Crop
+                            )
+                        }
+                    }
+
                     Spacer(modifier = Modifier.height(4.dp))
-//                    Text(
-//                        text = chatMessage.created_at, // Assuming timestamp is a string
-//                        style = MaterialTheme.typography.caption,
-//                        color = Color.Gray,
-//                        modifier = Modifier.align(Alignment.End)
-//                    )
                 }
             }
         }
