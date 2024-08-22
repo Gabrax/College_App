@@ -25,3 +25,12 @@ data class GradeData(
     val grade6: Int?,
     val grade7: Int?
 )
+
+@Serializable
+data class LiveChatMessage(
+    val id: Int? = null, // Include the id field if it exists
+    val name: String,
+    val surname: String,
+    val message: String,
+    val email: String,
+)

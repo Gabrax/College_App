@@ -60,6 +60,7 @@ kotlin {
             implementation("io.reactivex.rxjava2:rxjava:2.2.21")
             implementation("com.darkrockstudios:mpfilepicker:3.1.0")
             implementation("media.kamel:kamel-image:0.9.5")
+            implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

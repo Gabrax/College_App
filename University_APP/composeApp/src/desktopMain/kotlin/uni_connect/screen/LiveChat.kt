@@ -1,66 +1,192 @@
 package uni_connect.screen
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
+import io.github.jan.supabase.gotrue.auth
+import io.github.jan.supabase.postgrest.from
+import io.github.jan.supabase.realtime.PostgresAction
+import io.github.jan.supabase.realtime.channel
+import io.github.jan.supabase.realtime.postgresChangeFlow
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import uni_connect.Database.fetchUsers
-import uni_connect.Database.users
+import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.json.Json
+import uni_connect.Database.LiveChatMessage
+import uni_connect.Database.currentUserProfile
+import uni_connect.Database.supabase
+
 
 class LiveChat : Screen {
 
-
-    private var showContent by mutableStateOf(false)
-
     @Composable
     override fun Content() {
-        val navigator = LocalNavigator.currentOrThrow
         val coroutineScope = rememberCoroutineScope()
+        val usermail = supabase.auth.currentUserOrNull()
+
+        var liveChatMessages by remember { mutableStateOf<List<LiveChatMessage>>(emptyList()) }
+
+        LaunchedEffect(Unit) {
+            coroutineScope.launch {
+                try {
+                    listenToInserts(coroutineScope) { newMessage ->
+                        liveChatMessages = liveChatMessages + newMessage
+                    }
+
+                    val result = supabase.from("LiveChat").select()
+                    val jsonString = result.data
+                    liveChatMessages = Json { ignoreUnknownKeys = true }.decodeFromString<List<LiveChatMessage>>(jsonString)
+                } catch (error: Exception) {
+                    println("Error: ${error.message}")
+                }
+            }
+        }
+
+        ChatScreen(liveChatMessages, usermail!!.email.toString())
 
         Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxSize()
         ) {
-            Button(onClick = {
-                coroutineScope.launch {
-                    fetchUsers()
-                    showContent = true
-                }
-            }) {
-                Text("Fetch Users")
-            }
+            Spacer(modifier = Modifier.weight(1f))
 
-            AnimatedVisibility(visible = showContent) {
-                Column(
-                    Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    users.value.forEach { user ->
-                        Text(
-                            text = "ID: ${user.id}, Username: ${user.username}, Email: ${user.email}",
-                            color = Color.Black,
-                            modifier = Modifier.padding(8.dp)
-                        )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                var text by remember { mutableStateOf("") }
+
+                TextField(
+                    value = text,
+                    onValueChange = { text = it },
+                    placeholder = { Text("Enter text") },
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(8.dp)
+                )
+
+                Button(
+                    onClick = {
+                        println("Button clicked with input: $text")
+                        currentUserProfile.value.forEach { user ->
+                            insertMessage(user.name, user.surname, usermail.email.toString(), text)
+                        }
                     }
+                ) {
+                    Text("Send")
                 }
-            }
-
-            // Back button to pop the navigator stack
-            Button(onClick = { navigator.pop() }) {
-                Text(text = "Go Back")
             }
         }
     }
+}
+
+fun insertMessage(name: String, surname: String, email: String, messageContent: String) = runBlocking {
+    try {
+
+        val message = LiveChatMessage(
+            name = name,
+            surname = surname,
+            email = email,
+            message = messageContent
+        )
+
+        supabase
+            .from("LiveChat").insert(message) // Use the message object created above
+    } catch (e: Exception) {
+        println("Exception occurred: ${e.message}")
+    }
+}
+
+@Composable
+fun ChatScreen(liveChatMessages: List<LiveChatMessage>, currentUserId: String) {
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 100.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(liveChatMessages) { chatMessage ->
+            val isCurrentUser = chatMessage.email == currentUserId
+            val alignment = if (isCurrentUser) Alignment.End else Alignment.Start
+            val bubbleColor = if (isCurrentUser) Color(0xFFDCF8C6) else Color(0xFFECECEC)
+            val textColor = if (isCurrentUser) Color.Black else Color.Black
+            val bubbleShape = RoundedCornerShape(
+                topStart = 16.dp,
+                topEnd = 16.dp,
+                bottomEnd = if (isCurrentUser) 0.dp else 16.dp,
+                bottomStart = if (isCurrentUser) 16.dp else 0.dp
+            )
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = if (isCurrentUser) Arrangement.End else Arrangement.Start
+            ) {
+                Column(
+                    modifier = Modifier
+                        .background(bubbleColor, bubbleShape)
+                        .padding(12.dp)
+                        .widthIn(max = 300.dp),
+                    horizontalAlignment = alignment
+                ) {
+                    if (!isCurrentUser) {
+                        Text(
+                            text = "${chatMessage.name} ${chatMessage.surname}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color.Gray,
+                            modifier = Modifier.padding(bottom = 4.dp)
+                        )
+                    }
+                    Text(
+                        text = chatMessage.message,
+                        color = textColor,
+                        style = MaterialTheme.typography.displaySmall
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+//                    Text(
+//                        text = chatMessage.created_at, // Assuming timestamp is a string
+//                        style = MaterialTheme.typography.caption,
+//                        color = Color.Gray,
+//                        modifier = Modifier.align(Alignment.End)
+//                    )
+                }
+            }
+        }
+    }
+}
+
+// Listen to inserts and pass new records back to the Composable
+suspend fun listenToInserts(
+    coroutineScope: CoroutineScope,
+    onNewMessage: (LiveChatMessage) -> Unit
+) {
+    val channel = supabase.channel("LiveChat")
+    val changeFlow = channel.postgresChangeFlow<PostgresAction.Insert>(schema = "public") {
+        table = "LiveChat"
+    }
+
+    // Collect the flow and trigger a callback for each new message
+    changeFlow.onEach {
+        val newRecord = it.record.toString() // Convert the record to JSON string
+        val newMessage = Json.decodeFromString<LiveChatMessage>(newRecord) // Decode the new message
+        onNewMessage(newMessage) // Pass the new message to the callback
+    }.launchIn(coroutineScope)
+
+    channel.subscribe()
 }
