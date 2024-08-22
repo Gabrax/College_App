@@ -174,4 +174,11 @@ fun fetchCurrUserImage(){
     println("Fetched Image image: $bucket")
 }
 
+var imageUrl by mutableStateOf("")
+
+fun fetchUserImage(email: String) {
+    imageUrl = supabase.storage.from("userimages").publicUrl(email)
+    println("Fetched image for $email: $imageUrl")
+}
+
 

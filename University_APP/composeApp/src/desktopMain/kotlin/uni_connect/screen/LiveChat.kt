@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -25,6 +24,7 @@ import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.realtime.PostgresAction
 import io.github.jan.supabase.realtime.channel
 import io.github.jan.supabase.realtime.postgresChangeFlow
+import io.github.jan.supabase.storage.storage
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 import kotlinx.coroutines.CoroutineScope
@@ -34,8 +34,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import uni_connect.Database.LiveChatMessage
-import uni_connect.Database.bucket
 import uni_connect.Database.currentUserProfile
+import uni_connect.Database.fetchUserImage
 import uni_connect.Database.supabase
 
 
@@ -123,16 +123,7 @@ fun insertMessage(name: String, surname: String, email: String, messageContent: 
 
 @Composable
 fun ChatScreen(liveChatMessages: List<LiveChatMessage>, currentUserId: String) {
-    val painter = asyncPainterResource(bucket)
-    val listState = rememberLazyListState()
-
-    LaunchedEffect(liveChatMessages) {
-        if (liveChatMessages.isNotEmpty()) {
-            listState.scrollToItem(liveChatMessages.size - 1) // Scroll to the last item (most recent message)
-        }
-    }
     LazyColumn(
-        state = listState,
         modifier = Modifier
             .fillMaxSize()
             .padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 100.dp),
@@ -149,6 +140,15 @@ fun ChatScreen(liveChatMessages: List<LiveChatMessage>, currentUserId: String) {
                 bottomEnd = if (isCurrentUser) 0.dp else 16.dp,
                 bottomStart = if (isCurrentUser) 16.dp else 0.dp
             )
+
+            // State to hold the fetched image URL
+            var imageUrl by remember { mutableStateOf("") }
+
+            // Fetch the user image when the composable is recomposed
+            LaunchedEffect(chatMessage.email) {
+                fetchUserImage(chatMessage.email)
+                imageUrl = supabase.storage.from("userimages").publicUrl(chatMessage.email)
+            }
 
             Row(
                 modifier = Modifier
@@ -175,14 +175,15 @@ fun ChatScreen(liveChatMessages: List<LiveChatMessage>, currentUserId: String) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        if (!isCurrentUser) {
+                        if (!isCurrentUser && imageUrl.isNotEmpty()) {
+                            // Display the fetched user image
                             KamelImage(
-                                resource = painter,
+                                resource = asyncPainterResource(imageUrl),
                                 contentDescription = null,
                                 modifier = Modifier
                                     .size(24.dp)
                                     .clip(CircleShape)
-                                    .align(Alignment.CenterVertically), // Ensures the image stays aligned with the text
+                                    .align(Alignment.CenterVertically),
                                 contentScale = ContentScale.Crop
                             )
 
@@ -195,20 +196,21 @@ fun ChatScreen(liveChatMessages: List<LiveChatMessage>, currentUserId: String) {
                             style = MaterialTheme.typography.bodySmall,
                             fontSize = 12.sp,
                             modifier = Modifier
-                                .padding(end = if (isCurrentUser) 5.dp else 0.dp) // Adjust padding for current user
-                                .widthIn(max = 240.dp) // Set a maximum width for the text
+                                .padding(end = if (isCurrentUser) 5.dp else 0.dp)
+                                .widthIn(max = 240.dp)
                         )
 
-                        if (isCurrentUser) {
-                            Spacer(modifier = Modifier.width(8.dp)) // Space between the text and the image
+                        if (isCurrentUser && imageUrl.isNotEmpty()) {
+                            Spacer(modifier = Modifier.width(8.dp))
 
+                            // Display the current user image
                             KamelImage(
-                                resource = painter,
+                                resource = asyncPainterResource(imageUrl),
                                 contentDescription = null,
                                 modifier = Modifier
                                     .size(24.dp)
                                     .clip(CircleShape)
-                                    .align(Alignment.CenterVertically), // Ensures the image stays aligned with the text
+                                    .align(Alignment.CenterVertically),
                                 contentScale = ContentScale.Crop
                             )
                         }
