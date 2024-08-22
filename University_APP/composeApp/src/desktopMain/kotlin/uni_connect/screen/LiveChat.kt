@@ -91,7 +91,7 @@ class LiveChat : Screen {
 
                 Button(
                     onClick = {
-                        println("Button clicked with input: $text")
+                        //println("Button clicked with input: $text")
                         currentUserProfile.value.forEach { user ->
                             insertMessage(user.name, user.surname, usermail.email.toString(), text)
                         }
@@ -115,7 +115,7 @@ fun insertMessage(name: String, surname: String, email: String, messageContent: 
         )
 
         supabase
-            .from("LiveChat").insert(message) // Use the message object created above
+            .from("LiveChat").insert(message)
     } catch (e: Exception) {
         println("Exception occurred: ${e.message}")
     }
@@ -141,7 +141,7 @@ fun ChatScreen(liveChatMessages: List<LiveChatMessage>, currentUserId: String) {
                 bottomStart = if (isCurrentUser) 16.dp else 0.dp
             )
 
-            // State to hold the fetched image URL
+
             var imageUrl by remember { mutableStateOf("") }
 
             // Fetch the user image when the composable is recomposed
@@ -176,7 +176,6 @@ fun ChatScreen(liveChatMessages: List<LiveChatMessage>, currentUserId: String) {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         if (!isCurrentUser && imageUrl.isNotEmpty()) {
-                            // Display the fetched user image
                             KamelImage(
                                 resource = asyncPainterResource(imageUrl),
                                 contentDescription = null,
@@ -187,7 +186,7 @@ fun ChatScreen(liveChatMessages: List<LiveChatMessage>, currentUserId: String) {
                                 contentScale = ContentScale.Crop
                             )
 
-                            Spacer(modifier = Modifier.width(8.dp)) // Space between the image and the text
+                            Spacer(modifier = Modifier.width(8.dp))
                         }
 
                         Text(
@@ -203,7 +202,7 @@ fun ChatScreen(liveChatMessages: List<LiveChatMessage>, currentUserId: String) {
                         if (isCurrentUser && imageUrl.isNotEmpty()) {
                             Spacer(modifier = Modifier.width(8.dp))
 
-                            // Display the current user image
+
                             KamelImage(
                                 resource = asyncPainterResource(imageUrl),
                                 contentDescription = null,
@@ -223,7 +222,6 @@ fun ChatScreen(liveChatMessages: List<LiveChatMessage>, currentUserId: String) {
     }
 }
 
-// Listen to inserts and pass new records back to the Composable
 suspend fun listenToInserts(
     coroutineScope: CoroutineScope,
     onNewMessage: (LiveChatMessage) -> Unit
@@ -236,7 +234,7 @@ suspend fun listenToInserts(
     // Collect the flow and trigger a callback for each new message
     changeFlow.onEach {
         val newRecord = it.record.toString() // Convert the record to JSON string
-        val newMessage = Json.decodeFromString<LiveChatMessage>(newRecord) // Decode the new message
+        val newMessage = Json.decodeFromString<LiveChatMessage>(newRecord)
         onNewMessage(newMessage) // Pass the new message to the callback
     }.launchIn(coroutineScope)
 

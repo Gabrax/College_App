@@ -70,7 +70,6 @@ class LoginScreen: Screen {
                     if (currentSession != null) {
                         messageBarState.addSuccess("Successfully created account")
                         delay(1500L)
-                        fetchCurrUserImage()
                         navigator.replace(NameSurname())
                     }
                 } catch (e: Exception) {
@@ -84,8 +83,6 @@ class LoginScreen: Screen {
                             currentSession.email?.let { fetchCurrUser1YGrades(it) }
                             fetchCurrUserImage()
                             navigator.replace(MainScreen())
-//                            currentSession.email?.let { fetchCurrUser2YGrades(it) }
-//                            currentSession.email?.let { fetchCurrUser3YGrades(it) }
                         }
                     } catch (e: Exception) {
                         println(e.message)
@@ -201,7 +198,7 @@ class LoginScreen: Screen {
                         .focusRequester(buttonFocusRequester)
                         .onKeyEvent { event ->
                             if (event.key == Key.Enter && userEmail.isNotEmpty() && userPassword.isNotEmpty()) {
-                                onSignInClick() // Trigger the button's onClick action
+                                onSignInClick()
                                 true // Event is consumed
                             } else {
                                 false // Event is not consumed

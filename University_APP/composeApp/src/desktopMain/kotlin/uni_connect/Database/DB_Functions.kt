@@ -25,32 +25,31 @@ val twoygrades: State<List<GradeData>> get() = _2ygrades
 private var _3ygrades = mutableStateOf<List<GradeData>>(emptyList())
 val threeygrades: State<List<GradeData>> get() = _3ygrades
 
-// Fetch users from Supabase
-suspend fun fetchUsers() {
-    withContext(Dispatchers.IO) {
-        try {
-            // Fetch the data from Supabase
-            val fetchedUsers: List<User> = supabase
-                .from("users")
-                .select()
-                .decodeList()
 
-
-                _users.value = fetchedUsers
-                println("Fetched Users: $fetchedUsers")
-            } catch (e: Exception) {
-
-                e.printStackTrace()
-                _users.value = emptyList()
-            }
-
-    }
-}
+//suspend fun fetchUsers() {
+//    withContext(Dispatchers.IO) {
+//        try {
+//            // Fetch the data from Supabase
+//            val fetchedUsers: List<User> = supabase
+//                .from("users")
+//                .select()
+//                .decodeList()
+//
+//
+//                _users.value = fetchedUsers
+//                println("Fetched Users: $fetchedUsers")
+//            } catch (e: Exception) {
+//
+//                e.printStackTrace()
+//                _users.value = emptyList()
+//            }
+//
+//    }
+//}
 
 suspend fun fetchCurrUser1YGrades(user:String) {
     withContext(Dispatchers.IO) {
         try {
-            // Fetch the data from Supabase
             val fetchedgrades: List<GradeData> = supabase
                 .from("user_1y_$user")
                 .select()
@@ -69,7 +68,6 @@ suspend fun fetchCurrUser1YGrades(user:String) {
 suspend fun fetchCurrUser2YGrades(user:String) {
     withContext(Dispatchers.IO) {
         try {
-            // Fetch the data from Supabase
             val fetchedgrades: List<GradeData> = supabase
                 .from("user_2y_$user")
                 .select()
@@ -88,7 +86,6 @@ suspend fun fetchCurrUser2YGrades(user:String) {
 suspend fun fetchCurrUser3YGrades(user:String) {
     withContext(Dispatchers.IO) {
         try {
-            // Fetch the data from Supabase
             val fetchedgrades: List<GradeData> = supabase
                 .from("user_3y_$user")
                 .select()
@@ -128,11 +125,11 @@ val currentUserProfile: State<List<UserProfile>> get() = _currentUserProfile
 suspend fun fetchCurrentUsername() {
     return withContext(Dispatchers.IO) {
         try {
-            // Get the current user from Supabase
+
             val currUser = supabase.auth.currentUserOrNull()
 
             if (currUser?.email != null) {
-                // Fetch the user profile data
+
                 val response: List<UserProfile> = supabase.from("profiles")
                     .select(columns = Columns.type<UserProfile>()){
                         filter {
@@ -178,7 +175,7 @@ var imageUrl by mutableStateOf("")
 
 fun fetchUserImage(email: String) {
     imageUrl = supabase.storage.from("userimages").publicUrl(email)
-    println("Fetched image for $email: $imageUrl")
+    //println("Fetched image for $email: $imageUrl")
 }
 
 

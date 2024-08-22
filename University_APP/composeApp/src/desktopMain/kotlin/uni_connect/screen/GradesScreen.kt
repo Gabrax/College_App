@@ -25,8 +25,6 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import io.github.jan.supabase.gotrue.auth
 import kotlinx.coroutines.launch
 import rememberMessageBarState
@@ -35,16 +33,11 @@ import uni_connect.Database.*
 class GradesScreen: Screen {
     @Composable
     override fun Content() {
-        val navigator = LocalNavigator.currentOrThrow
         val scope = rememberCoroutineScope()
         val auth = remember { supabase.auth }
         val messageBarState = rememberMessageBarState()
 
         val user = auth.currentUserOrNull()
-
-        val gradeList = oneygrades.value
-
-        val listSize = gradeList.size
 
         var oneYbool by mutableStateOf(true)
         var twoYbool by mutableStateOf(false)

@@ -15,4 +15,7 @@ but in the form of an desktop application instead of a website
 - Kotlin
 - JetBrains Compose Multiplatform UI Framework
 - Supabase API (Postgres database)
-- NEWS Api for Kotlin - https://github.com/dfloureiro/News-API-Kotlin
+- NEWSApi for Kotlin -> https://github.com/dfloureiro/News-API-Kotlin
+- MessageBarKMP -> https://github.com/stevdza-san/MessageBar-KMP
+- KMPFilePicker -> https://github.com/Wavesonics/compose-multiplatform-file-picker
+- Kamel(media loading) -> https://github.com/Kamel-Media/Kamel

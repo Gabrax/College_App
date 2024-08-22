@@ -17,7 +17,7 @@ const val SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhY
 val supabase = createSupabaseClient(SUPABASE_URL, SUPABASE_KEY) {
     install(Postgrest)
     install(Auth){
-        //alwaysAutoRefresh = false
+        alwaysAutoRefresh = false
         autoLoadFromStorage = false
     }
     install(Storage)

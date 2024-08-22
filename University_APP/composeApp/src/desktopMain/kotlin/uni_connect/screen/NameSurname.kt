@@ -42,7 +42,7 @@ import java.io.File
 import javax.imageio.ImageIO
 
 
-class NameSurname: Screen{
+class NameSurname : Screen {
 
     @Composable
     override fun Content() {
@@ -71,6 +71,7 @@ class NameSurname: Screen{
         var pathSingleChosen by remember { mutableStateOf("") }
         var showFilePicker by remember { mutableStateOf(false) }
         var imageBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
+        var isImageSelected by remember { mutableStateOf(false) }
 
         val fileType = listOf("jpg", "png", "jpeg")
 
@@ -81,7 +82,7 @@ class NameSurname: Screen{
                 try {
                     val currentSession = auth.currentUserOrNull()
                     if (currentSession != null) {
-                        insertDisplayName(userName,userSurname)
+                        insertDisplayName(userName, userSurname)
                         messageBarState.addSuccess("Successfully logged in")
                         delay(1500L)
                         fetchCurrentUsername()
@@ -90,12 +91,12 @@ class NameSurname: Screen{
                         navigator.replace(MainScreen())
                     }
                 } catch (e: Exception) {
-                        messageBarState.addError(Exception("Invalid Credentials"))
+                    messageBarState.addError(Exception("Invalid Credentials"))
                 }
             }
         }
 
-        ContentWithMessageBar(messageBarState = messageBarState){
+        ContentWithMessageBar(messageBarState = messageBarState) {
             Column(
                 modifier = Modifier
                     .fillMaxSize(),
@@ -109,37 +110,59 @@ class NameSurname: Screen{
                     },
                     modifier = Modifier.size(150.dp),
                     shape = CircleShape,
-                    border = BorderStroke(1.dp, Color.Black),
+                    border = BorderStroke(1.dp, Color(0xFFFFB5A0)),
                     contentPadding = PaddingValues(0.dp),
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Gray)
                 ) {
                     imageBitmap?.let { bitmap ->
                         Image(
                             bitmap = bitmap,
-                            contentDescription = null, // Provide a content description for accessibility
-                            modifier = Modifier
+                            contentDescription = null,
+                        )
+                    }
+
+                    if (!isImageSelected) {
+                        Text(
+                            text = "Select Image",
+                            color = Color.Gray,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold
                         )
                     }
                 }
 
                 if (showFilePicker) {
                     FilePicker(show = showFilePicker, fileExtensions = fileType) { file ->
-                        pathSingleChosen = file?.path ?: "none selected"
-                        filepath = File(pathSingleChosen)
-                        val bufferedImage: BufferedImage = ImageIO.read(filepath)
-                        imageBitmap = bufferedImage.toComposeImageBitmap()
+                        if (file != null) {
+                            pathSingleChosen = file.path
+                            filepath = File(pathSingleChosen)
+
+                            try {
+                                val bufferedImage: BufferedImage = ImageIO.read(filepath)
+                                imageBitmap = bufferedImage.toComposeImageBitmap()
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+
+                            isImageSelected = true
+                        } else {
+                            messageBarState.addError(Exception("Profile Image is needed"))
+                            // File was not selected (user closed the picker)
+                            pathSingleChosen = ""
+                            isImageSelected = false
+                        }
+
                         showFilePicker = false
                     }
                 }
 
-                Text("Enter your\ndisplay name:",
+                Text(
+                    "Enter your\ndisplay name:",
                     modifier = Modifier.wrapContentSize(Alignment.Center),
                     color = Color.White,
                     fontWeight = FontWeight.Bold,
                     fontSize = 25.sp
                 )
-
-                //Spacer(modifier = Modifier.height(25.dp))
 
                 LaunchedEffect(Unit) {
                     nameFocusRequester.requestFocus()
@@ -223,36 +246,36 @@ class NameSurname: Screen{
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
+
                 Button(
                     onClick = {
-                                scope.launch {
-                                    try{
-                                        configureClick()
-                                        val gimmeemail = auth.currentUserOrNull()
-                                            val filename = gimmeemail?.email
-                                            val bucket = storage.from("userimages")
-                                            if (filename != null) {
-                                                bucket.upload(filename,filepath,upsert = false)
-                                            }
-                                            fetchCurrUserImage()
-
-                                    } catch (e: Exception) {
-                                        e.printStackTrace()
-                                    }
+                        scope.launch {
+                            try {
+                                configureClick()
+                                val gimmeemail = auth.currentUserOrNull()
+                                val filename = gimmeemail?.email
+                                val bucket = storage.from("userimages")
+                                if (filename != null) {
+                                    bucket.upload(filename, filepath, upsert = false)
+                                }
+                                fetchCurrUserImage()
+                            } catch (e: Exception) {
+                                e.printStackTrace()
                             }
-                              },
-                            modifier = Modifier
-                                .focusRequester(buttonFocusRequester)
-                                .onKeyEvent { event ->
-                            if (event.key == Key.Enter && userName.isNotEmpty() && userSurname.isNotEmpty()) {
-                                configureClick() // Trigger the button's onClick action
+                        }
+                    },
+                    modifier = Modifier
+                        .focusRequester(buttonFocusRequester)
+                        .onKeyEvent { event ->
+                            if (event.key == Key.Enter && userName.isNotEmpty() && userSurname.isNotEmpty() && isImageSelected) {
+                                configureClick()
                                 true // Event is consumed
                             } else {
                                 false // Event is not consumed
                             }
                         },
-                    enabled = userName.isNotEmpty() && userSurname.isNotEmpty()
-                ){
+                    enabled = userName.isNotEmpty() && userSurname.isNotEmpty() && isImageSelected
+                ) {
                     Text(text = "Configure")
                 }
             }
