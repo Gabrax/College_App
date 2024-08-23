@@ -138,7 +138,7 @@ suspend fun fetchCurrentUsername() {
                     }.decodeList()
 
                 _currentUserProfile.value = response
-                println("Fetched Users: $response")
+                //println("Fetched Users: $response")
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -168,7 +168,7 @@ fun fetchCurrUserImage(){
     val bruh: String = user?.email.toString()
     bucket = supabase.storage.from("userimages").publicUrl(bruh)
 
-    println("Fetched Image image: $bucket")
+    //println("Fetched Image image: $bucket")
 }
 
 var imageUrl by mutableStateOf("")

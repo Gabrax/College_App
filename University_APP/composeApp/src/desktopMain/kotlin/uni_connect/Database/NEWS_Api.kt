@@ -38,7 +38,7 @@ fun techNews() {
             },
             { t -> println("getTopHeadlines error: ${t.message ?: "Unknown error"}") },
             {
-                printSavedArticles()
+                //printSavedArticles()
             }
         )
 }

@@ -3,9 +3,9 @@
 </p>
 
 > [!WARNING]
-> This project is strictly educational. Keep your expectations low.
+> At the time of production, jetpack compose was still found to be severely limited to mobile applications. Keep your expectations low.
 
-The objective of this project is to gain experience in Software Application Development with SQL.
+The objective of this project is to gain experience in Software Application Development with SQL Supabase Queries.
 
 This application is an idea to integrate with the university's database, 
 it basically relies on the same idea that is used by many schools,

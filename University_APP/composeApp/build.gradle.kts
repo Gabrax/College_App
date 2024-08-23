@@ -78,6 +78,15 @@ compose.desktop {
             modules("jdk.crypto.ec")
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "Uni_Connect"
+            windows {
+                iconFile.set(file("src/resources/winlogo.ico"))
+            }
+            macOS {
+                iconFile.set(file("src/resources/a3nvb-yx38e.icns"))
+            }
+            linux {
+                iconFile.set(file("src/resources/Unilogo.png"))
+            }
 
 
         }
